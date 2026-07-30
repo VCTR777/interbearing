@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 import AdminHeader from "../components/AdminHeader";
+import DeleteOrderButton from "./DeleteOrderButton";
 import OrderStatusSelect from "./OrderStatusSelect";
 
 type OrderItem = {
@@ -346,7 +347,13 @@ export default async function OrdersPage({
                     </div>
                   </div>
 
-                  <OrderStatusSelect id={order.id} status={order.status} />
+                  <div className="space-y-3">
+                    <OrderStatusSelect id={order.id} status={order.status} />
+                    <DeleteOrderButton
+                      id={order.id}
+                      orderNumber={orderNumber}
+                    />
+                  </div>
                 </div>
 
                 <div className="grid gap-7 px-6 py-6 lg:grid-cols-[1fr_280px]">
