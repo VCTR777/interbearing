@@ -3,6 +3,7 @@ import Brands from "./components/Brands";
 import Categories from "./components/Categories";
 import Features from "./components/Features";
 import Hero from "./components/Hero";
+import HowItWorks from "./components/HowItWorks";
 import Navbar from "./components/Navbar";
 import PopularProducts from "./components/PopularProducts";
 
@@ -16,6 +17,7 @@ export default function Home() {
       <PopularProducts />
       <Brands />
       <About />
+      <HowItWorks />
     </main>
   );
 }
