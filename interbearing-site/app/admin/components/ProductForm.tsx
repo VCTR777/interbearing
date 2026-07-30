@@ -1,0 +1,332 @@
+"use client";
+
+import { ImagePlus, LoaderCircle, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+export type ProductFormValue = {
+  id: string;
+  brand: string;
+  article: string;
+  title: string;
+  description: string;
+  category: string;
+  image_url: string | null;
+  specifications: unknown;
+  stock_status: string;
+  is_published: boolean;
+  is_popular: boolean;
+  sort_order: number;
+};
+
+function specsToText(value: unknown) {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string").join("\n")
+    : "";
+}
+
+function createSlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9а-яіїєґ]+/gi, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export default function ProductForm({
+  product,
+}: {
+  product?: ProductFormValue;
+}) {
+  const router = useRouter();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const isEditing = Boolean(product);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
+    const form = new FormData(event.currentTarget);
+    const article = String(form.get("article") || "").trim();
+    const title = String(form.get("title") || "").trim();
+    const brand = String(form.get("brand") || "").trim().toUpperCase();
+
+    if (!article || !title || !brand) {
+      setError("Заповніть бренд, артикул і назву товару.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!isEditing && !imageFile) {
+      setError("Додайте фотографію товару.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+      setError("Фотографія не повинна перевищувати 5 МБ.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const supabase = createClient();
+    let imageUrl = product?.image_url || null;
+    let uploadedPath: string | null = null;
+
+    if (imageFile) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setError("Сесія завершилася. Увійдіть ще раз.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const extension =
+        imageFile.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") ||
+        "jpg";
+      uploadedPath = `${user.id}/${crypto.randomUUID()}.${extension}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("product-images")
+        .upload(uploadedPath, imageFile, {
+          cacheControl: "3600",
+          contentType: imageFile.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        setError(`Не вдалося завантажити фото: ${uploadError.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+
+      imageUrl = supabase.storage
+        .from("product-images")
+        .getPublicUrl(uploadedPath).data.publicUrl;
+    }
+
+    const sortOrder = Number(form.get("sort_order") || 0);
+    const values = {
+      slug: createSlug(article),
+      brand,
+      article,
+      title,
+      description: String(form.get("description") || "").trim(),
+      category: String(form.get("category") || "").trim() || "Підшипники",
+      image_url: imageUrl,
+      specifications: String(form.get("specifications") || "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean),
+      stock_status:
+        String(form.get("stock_status") || "").trim() || "В наявності",
+      is_published: form.get("is_published") === "on",
+      is_popular: form.get("is_popular") === "on",
+      sort_order: Number.isFinite(sortOrder) ? sortOrder : 0,
+      updated_at: new Date().toISOString(),
+    };
+
+    const result = product
+      ? await supabase.from("products").update(values).eq("id", product.id)
+      : await supabase.from("products").insert(values);
+
+    if (result.error) {
+      if (uploadedPath) {
+        await supabase.storage.from("product-images").remove([uploadedPath]);
+      }
+      setError(
+        result.error.code === "23505"
+          ? "Товар із таким артикулом уже існує."
+          : `Не вдалося зберегти товар: ${result.error.message}`,
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    router.push("/admin");
+    router.refresh();
+  }
+
+  const input =
+    "mt-2 h-13 w-full rounded-xl border border-white/10 bg-[#0b1220] px-4 text-white outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-8 space-y-8">
+      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+        <h2 className="text-xl font-bold">Основна інформація</h2>
+        <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <label className="text-sm font-medium text-slate-300">
+            Бренд *
+            <input
+              name="brand"
+              required
+              defaultValue={product?.brand}
+              placeholder="SKF"
+              className={input}
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Артикул *
+            <input
+              name="article"
+              required
+              defaultValue={product?.article}
+              placeholder="6205-2RS"
+              className={input}
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-300 md:col-span-2">
+            Назва товару *
+            <input
+              name="title"
+              required
+              defaultValue={product?.title}
+              placeholder="Кульковий підшипник"
+              className={input}
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Категорія
+            <input
+              name="category"
+              defaultValue={product?.category || "Підшипники"}
+              className={input}
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Наявність
+            <select
+              name="stock_status"
+              defaultValue={product?.stock_status || "В наявності"}
+              className={input}
+            >
+              <option>В наявності</option>
+              <option>Під замовлення</option>
+              <option>Немає в наявності</option>
+            </select>
+          </label>
+          <label className="text-sm font-medium text-slate-300 md:col-span-2">
+            Опис
+            <textarea
+              name="description"
+              defaultValue={product?.description}
+              rows={5}
+              className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b1220] px-4 py-3 text-white outline-none focus:border-blue-500"
+            />
+          </label>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+        <h2 className="text-xl font-bold">Фото та характеристики</h2>
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <label className="flex min-h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-blue-400/30 bg-blue-500/[0.05] px-5 text-center hover:bg-blue-500/10">
+            <ImagePlus className="text-blue-400" size={34} />
+            <span className="mt-3 font-semibold">
+              {imageFile
+                ? imageFile.name
+                : isEditing
+                  ? "Замінити фотографію"
+                  : "Вибрати фотографію"}
+            </span>
+            <span className="mt-2 text-sm text-slate-500">
+              JPG, PNG або WebP, максимум 5 МБ
+            </span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={(event) => setImageFile(event.target.files?.[0] || null)}
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Характеристики
+            <textarea
+              name="specifications"
+              defaultValue={specsToText(product?.specifications)}
+              rows={8}
+              placeholder={
+                "Внутрішній діаметр: 25 мм\nЗовнішній діаметр: 52 мм\nШирина: 15 мм"
+              }
+              className="mt-2 w-full rounded-xl border border-white/10 bg-[#0b1220] px-4 py-3 text-white outline-none focus:border-blue-500"
+            />
+            <span className="mt-2 block text-xs text-slate-500">
+              Кожна характеристика — з нового рядка.
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+        <div className="grid gap-5 md:grid-cols-3">
+          <label className="flex items-center gap-3 text-sm text-slate-300">
+            <input
+              name="is_published"
+              type="checkbox"
+              defaultChecked={product?.is_published ?? true}
+              className="h-5 w-5 accent-blue-600"
+            />
+            Опублікувати товар
+          </label>
+          <label className="flex items-center gap-3 text-sm text-slate-300">
+            <input
+              name="is_popular"
+              type="checkbox"
+              defaultChecked={product?.is_popular ?? false}
+              className="h-5 w-5 accent-blue-600"
+            />
+            Популярний товар
+          </label>
+          <label className="text-sm text-slate-300">
+            Порядок показу
+            <input
+              name="sort_order"
+              type="number"
+              defaultValue={product?.sort_order ?? 0}
+              className={input}
+            />
+          </label>
+        </div>
+      </section>
+
+      {error && (
+        <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-300">
+          {error}
+        </p>
+      )}
+
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          onClick={() => router.push("/admin")}
+          className="h-13 rounded-xl border border-white/10 px-6 font-semibold text-slate-300"
+        >
+          Скасувати
+        </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 font-semibold hover:bg-blue-500 disabled:opacity-60"
+        >
+          {isSubmitting ? (
+            <LoaderCircle className="animate-spin" size={20} />
+          ) : (
+            <Save size={20} />
+          )}
+          {isSubmitting
+            ? "Збереження…"
+            : isEditing
+              ? "Зберегти зміни"
+              : "Додати товар"}
+        </button>
+      </div>
+    </form>
+  );
+}
