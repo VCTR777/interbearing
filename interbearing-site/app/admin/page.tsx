@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import AdminHeader from "./components/AdminHeader";
 import DeleteProductButton from "./components/DeleteProductButton";
+import ProductCsvTools from "./components/ProductCsvTools";
 
 type Product = {
   id: string;
@@ -46,6 +47,8 @@ export default async function AdminPage() {
             Додати товар
           </Link>
         </div>
+
+        <ProductCsvTools />
 
         {error && (
           <p className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-300">

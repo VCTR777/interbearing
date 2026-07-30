@@ -15,6 +15,7 @@ import {
 import { requireAdmin } from "@/lib/admin";
 import AdminHeader from "../components/AdminHeader";
 import DeleteOrderButton from "./DeleteOrderButton";
+import ExportOrdersButton from "./ExportOrdersButton";
 import OrderStatusSelect from "./OrderStatusSelect";
 
 type OrderItem = {
@@ -138,14 +139,17 @@ export default async function OrdersPage({
       <AdminHeader email={user.email} />
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-6">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
-            Панель керування
-          </p>
-          <h1 className="mt-3 text-4xl font-bold">Замовлення</h1>
-          <p className="mt-3 text-slate-400">
-            Усього замовлень: {orders.length}
-          </p>
+        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
+              Панель керування
+            </p>
+            <h1 className="mt-3 text-4xl font-bold">Замовлення</h1>
+            <p className="mt-3 text-slate-400">
+              Усього замовлень: {orders.length}
+            </p>
+          </div>
+          <ExportOrdersButton orders={filteredOrders} />
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
