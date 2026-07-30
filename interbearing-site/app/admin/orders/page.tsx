@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   CalendarClock,
   CheckCircle2,
@@ -6,7 +7,10 @@ import {
   Mail,
   PackageCheck,
   Phone,
+  Search,
   ShoppingBag,
+  SlidersHorizontal,
+  X,
 } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 import AdminHeader from "../components/AdminHeader";
@@ -35,6 +39,13 @@ type Order = {
   created_at: string;
 };
 
+type OrdersPageProps = {
+  searchParams: Promise<{
+    q?: string | string[];
+    status?: string | string[];
+  }>;
+};
+
 const statusStyles: Record<string, string> = {
   new: "border-blue-500/25 bg-blue-500/10 text-blue-300",
   processing: "border-amber-500/25 bg-amber-500/10 text-amber-300",
@@ -42,23 +53,75 @@ const statusStyles: Record<string, string> = {
   cancelled: "border-red-500/25 bg-red-500/10 text-red-300",
 };
 
+const statusOptions = [
+  { value: "all", label: "Усі статуси" },
+  { value: "new", label: "Нові" },
+  { value: "processing", label: "В роботі" },
+  { value: "completed", label: "Завершені" },
+  { value: "cancelled", label: "Скасовані" },
+];
+
 function getItems(value: unknown): OrderItem[] {
   return Array.isArray(value) ? (value as OrderItem[]) : [];
+}
+
+function getParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] || "" : value || "";
 }
 
 function formatPrice(value: number) {
   return `${value.toLocaleString("uk-UA")} грн`;
 }
 
-export default async function OrdersPage() {
+export default async function OrdersPage({
+  searchParams,
+}: OrdersPageProps) {
   const { supabase, user } = await requireAdmin();
+  const params = await searchParams;
+  const query = getParam(params.q).trim();
+  const requestedStatus = getParam(params.status);
+  const selectedStatus = statusOptions.some(
+    (option) => option.value === requestedStatus,
+  )
+    ? requestedStatus
+    : "all";
+
   const { data, error } = await supabase
     .from("orders")
     .select(
       "id, customer_name, customer_phone, customer_email, comment, items, total, has_unknown_prices, status, created_at",
     )
     .order("created_at", { ascending: false });
+
   const orders = (data || []) as Order[];
+  const normalizedQuery = query.toLocaleLowerCase("uk-UA");
+
+  const filteredOrders = orders.filter((order) => {
+    const matchesStatus =
+      selectedStatus === "all" || order.status === selectedStatus;
+
+    if (!matchesStatus) return false;
+    if (!normalizedQuery) return true;
+
+    const items = getItems(order.items);
+    const searchableText = [
+      order.id,
+      order.id.slice(0, 8),
+      order.customer_name,
+      order.customer_phone,
+      order.customer_email || "",
+      order.comment || "",
+      ...items.flatMap((item) => [
+        item.brand,
+        item.article,
+        item.title,
+      ]),
+    ]
+      .join(" ")
+      .toLocaleLowerCase("uk-UA");
+
+    return searchableText.includes(normalizedQuery);
+  });
 
   const stats = {
     new: orders.filter((order) => order.status === "new").length,
@@ -67,9 +130,12 @@ export default async function OrdersPage() {
     cancelled: orders.filter((order) => order.status === "cancelled").length,
   };
 
+  const filtersActive = Boolean(query || selectedStatus !== "all");
+
   return (
     <main className="min-h-screen bg-[#080c14] pb-16 text-white">
       <AdminHeader email={user.email} />
+
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-6">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
@@ -83,7 +149,12 @@ export default async function OrdersPage() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[
-            { label: "Нові", value: stats.new, icon: Clock3, color: "text-blue-400" },
+            {
+              label: "Нові",
+              value: stats.new,
+              icon: Clock3,
+              color: "text-blue-400",
+            },
             {
               label: "В роботі",
               value: stats.processing,
@@ -104,6 +175,7 @@ export default async function OrdersPage() {
             },
           ].map((item) => {
             const Icon = item.icon;
+
             return (
               <div
                 key={item.label}
@@ -116,6 +188,75 @@ export default async function OrdersPage() {
             );
           })}
         </div>
+
+        <form
+          action="/admin/orders"
+          method="get"
+          className="mt-8 rounded-2xl border border-white/10 bg-[#111827] p-4 sm:p-5"
+        >
+          <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-300">
+            <SlidersHorizontal size={18} className="text-blue-400" />
+            Пошук і фільтри
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-[1fr_230px_auto]">
+            <label className="relative block">
+              <span className="sr-only">Пошук замовлення</span>
+              <Search
+                aria-hidden="true"
+                size={19}
+                className="pointer-events-none absolute left-4 top-3.5 text-slate-500"
+              />
+              <input
+                type="search"
+                name="q"
+                defaultValue={query}
+                placeholder="Номер, ім’я, телефон, email або товар"
+                className="h-12 w-full rounded-xl border border-white/10 bg-[#0b1220] pl-12 pr-4 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-500"
+              />
+            </label>
+
+            <label>
+              <span className="sr-only">Статус замовлення</span>
+              <select
+                name="status"
+                defaultValue={selectedStatus}
+                className="h-12 w-full rounded-xl border border-white/10 bg-[#0b1220] px-4 text-sm font-semibold text-white outline-none focus:border-blue-500"
+              >
+                {statusOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <button
+              type="submit"
+              className="h-12 rounded-xl bg-blue-600 px-6 text-sm font-bold transition hover:bg-blue-500"
+            >
+              Застосувати
+            </button>
+          </div>
+
+          {filtersActive && (
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm text-slate-400">
+                Знайдено замовлень:{" "}
+                <span className="font-bold text-white">
+                  {filteredOrders.length}
+                </span>
+              </p>
+              <Link
+                href="/admin/orders"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-400 transition hover:text-blue-300"
+              >
+                <X size={17} />
+                Скинути фільтри
+              </Link>
+            </div>
+          )}
+        </form>
 
         {error && (
           <p className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-300">
@@ -135,8 +276,26 @@ export default async function OrdersPage() {
           </div>
         )}
 
+        {!error && orders.length > 0 && filteredOrders.length === 0 && (
+          <div className="mt-10 rounded-3xl border border-dashed border-white/15 bg-[#111827] px-6 py-16 text-center">
+            <Search className="mx-auto text-blue-400" size={42} />
+            <h2 className="mt-5 text-2xl font-bold">
+              Нічого не знайдено
+            </h2>
+            <p className="mt-3 text-slate-400">
+              Спробуйте змінити запит або вибрати інший статус.
+            </p>
+            <Link
+              href="/admin/orders"
+              className="mt-6 inline-flex rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold transition hover:bg-blue-500"
+            >
+              Показати всі замовлення
+            </Link>
+          </div>
+        )}
+
         <div className="mt-10 space-y-6">
-          {orders.map((order) => {
+          {filteredOrders.map((order) => {
             const items = getItems(order.items);
             const orderNumber = order.id.slice(0, 8).toUpperCase();
 
@@ -161,9 +320,11 @@ export default async function OrdersPage() {
                         }).format(new Date(order.created_at))}
                       </span>
                     </div>
+
                     <h2 className="mt-4 text-2xl font-bold">
                       {order.customer_name}
                     </h2>
+
                     <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-400">
                       <a
                         href={`tel:${order.customer_phone}`}
@@ -172,6 +333,7 @@ export default async function OrdersPage() {
                         <Phone size={16} />
                         {order.customer_phone}
                       </a>
+
                       {order.customer_email && (
                         <a
                           href={`mailto:${order.customer_email}`}
@@ -183,6 +345,7 @@ export default async function OrdersPage() {
                       )}
                     </div>
                   </div>
+
                   <OrderStatusSelect id={order.id} status={order.status} />
                 </div>
 
@@ -192,6 +355,7 @@ export default async function OrdersPage() {
                       <PackageCheck size={19} className="text-blue-400" />
                       Товари
                     </h3>
+
                     <div className="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10">
                       {items.map((item) => (
                         <div
@@ -206,6 +370,7 @@ export default async function OrdersPage() {
                               {item.title}
                             </p>
                           </div>
+
                           <p className="text-sm text-slate-300">
                             {item.quantity} шт. ·{" "}
                             {item.price === null
@@ -218,17 +383,21 @@ export default async function OrdersPage() {
                   </div>
 
                   <div className="rounded-2xl border border-white/10 bg-[#0b1220] p-5">
-                    <p className="text-sm text-slate-500">Сума замовлення</p>
+                    <p className="text-sm text-slate-500">
+                      Сума замовлення
+                    </p>
                     <p className="mt-2 text-2xl font-black">
                       {order.total === null
                         ? "Уточнюється"
                         : formatPrice(Number(order.total))}
                     </p>
+
                     {order.has_unknown_prices && (
                       <p className="mt-3 text-xs leading-5 text-amber-300">
                         Є товари без указаної ціни.
                       </p>
                     )}
+
                     {order.comment && (
                       <>
                         <p className="mt-6 text-sm font-semibold text-slate-300">
