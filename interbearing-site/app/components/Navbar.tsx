@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import CartLink from "./CartLink";
 
 const navigation = [
   { label: "Головна", href: "/" },
@@ -61,7 +62,6 @@ export default function Navbar() {
                 }`}
               >
                 {item.label}
-
                 {isActive && (
                   <span className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-blue-500" />
                 )}
@@ -71,13 +71,13 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <CartLink />
           <Link
             href="/contacts"
             className="hidden rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold transition hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-600/25 sm:inline-flex lg:px-6"
           >
             Залишити заявку
           </Link>
-
           <button
             type="button"
             aria-label={isMenuOpen ? "Закрити меню" : "Відкрити меню"}
@@ -86,11 +86,7 @@ export default function Navbar() {
             onClick={() => setIsMenuOpen((current) => !current)}
             className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white transition hover:border-blue-400/40 hover:bg-blue-500/10 lg:hidden"
           >
-            {isMenuOpen ? (
-              <X aria-hidden="true" size={23} />
-            ) : (
-              <Menu aria-hidden="true" size={23} />
-            )}
+            {isMenuOpen ? <X size={23} /> : <Menu size={23} />}
           </button>
         </div>
       </div>
@@ -125,25 +121,22 @@ export default function Navbar() {
                   }`}
                 >
                   {item.label}
-                  <span
-                    aria-hidden="true"
-                    className={isActive ? "text-blue-400" : "text-gray-600"}
-                  >
-                    →
-                  </span>
+                  <span aria-hidden="true">→</span>
                 </Link>
               );
             })}
+            <Link
+              href="/cart"
+              className="flex items-center justify-between rounded-2xl px-5 py-4 text-lg font-semibold text-gray-200 hover:bg-white/[0.05]"
+            >
+              Кошик
+              <span aria-hidden="true">→</span>
+            </Link>
           </div>
-
           <div className="mt-auto border-t border-white/10 pt-6">
-            <p className="text-sm leading-6 text-gray-400">
-              Потрібна допомога з підбором підшипника?
-            </p>
-
             <Link
               href="/contacts"
-              className="mt-4 flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-4 text-base font-semibold transition hover:bg-blue-500"
+              className="flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-4 text-base font-semibold transition hover:bg-blue-500"
             >
               Залишити заявку
             </Link>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AddToCartButton from "../../components/AddToCartButton";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import { createClient } from "@/lib/supabase/server";
@@ -48,10 +49,6 @@ export default async function ProductPage({
     .eq("is_published", true)
     .neq("id", product.id)
     .limit(3);
-
-  const contactHref = `/contacts?product=${encodeURIComponent(
-    `${product.brand} ${product.article}`,
-  )}`;
 
   return (
     <>
@@ -121,24 +118,29 @@ export default async function ProductPage({
               </div>
 
               <div className="mt-10 rounded-3xl border border-blue-500/20 bg-blue-600/10 p-7">
-                <h2 className="text-2xl font-bold">
-                  Потрібна ціна або консультація?
-                </h2>
+                <h2 className="text-2xl font-bold">Додати товар до кошика</h2>
                 <p className="mt-3 leading-7 text-gray-400">
-                  Надішліть запит щодо {product.brand} {product.article}.
+                  Додайте {product.brand} {product.article}, оберіть кількість та
+                  надішліть замовлення менеджеру.
                 </p>
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                  <AddToCartButton
+                    product={{
+                      id: product.id,
+                      slug: product.slug,
+                      brand: product.brand,
+                      article: product.article,
+                      title: product.title,
+                      imageUrl: product.image_url,
+                      price: product.price,
+                    }}
+                    className="flex-1"
+                  />
                   <Link
-                    href={contactHref}
-                    className="flex-1 rounded-xl bg-blue-600 px-7 py-4 text-center font-semibold hover:bg-blue-500"
-                  >
-                    Замовити
-                  </Link>
-                  <Link
-                    href="/catalog"
+                    href="/cart"
                     className="flex-1 rounded-xl border border-white/15 px-7 py-4 text-center font-semibold hover:bg-white/5"
                   >
-                    До каталогу
+                    Перейти до кошика
                   </Link>
                 </div>
               </div>
