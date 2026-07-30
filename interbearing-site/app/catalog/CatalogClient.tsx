@@ -15,6 +15,7 @@ export type CatalogProduct = {
   image_url: string | null;
   stock_status: string;
   price: number | null;
+  sections: string[] | null;
 };
 
 export default function CatalogClient({
@@ -28,6 +29,7 @@ export default function CatalogClient({
     [products],
   );
   const requestedBrand = searchParams.get("brand")?.toUpperCase() || "Усі";
+  const requestedSection = searchParams.get("section") || "";
   const [search, setSearch] = useState("");
   const [selectedBrand, setSelectedBrand] = useState(
     brands.includes(requestedBrand) ? requestedBrand : "Усі",
@@ -44,9 +46,12 @@ export default function CatalogClient({
         product.article.toLowerCase().includes(query) ||
         product.title.toLowerCase().includes(query) ||
         product.description.toLowerCase().includes(query);
-      return matchesBrand && matchesSearch;
+      const matchesSection =
+        !requestedSection ||
+        (product.sections || []).includes(requestedSection);
+      return matchesBrand && matchesSearch && matchesSection;
     });
-  }, [products, search, selectedBrand]);
+  }, [products, requestedSection, search, selectedBrand]);
 
   return (
     <>
@@ -85,12 +90,19 @@ export default function CatalogClient({
       </div>
 
       <div className="mt-10 flex items-center justify-between gap-4">
-        <p className="text-gray-400">
-          Знайдено товарів:{" "}
-          <span className="font-semibold text-white">
-            {filteredProducts.length}
-          </span>
-        </p>
+        <div>
+          {requestedSection && (
+            <p className="mb-2 text-sm font-semibold text-blue-400">
+              Активна секція каталогу
+            </p>
+          )}
+          <p className="text-gray-400">
+            Знайдено товарів:{" "}
+            <span className="font-semibold text-white">
+              {filteredProducts.length}
+            </span>
+          </p>
+        </div>
         {(search || selectedBrand !== "Усі") && (
           <button
             type="button"

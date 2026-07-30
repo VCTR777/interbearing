@@ -12,6 +12,7 @@ export type ProductFormValue = {
   title: string;
   description: string;
   category: string;
+  sections: string[] | null;
   image_url: string | null;
   specifications: unknown;
   stock_status: string;
@@ -20,6 +21,15 @@ export type ProductFormValue = {
   is_popular: boolean;
   sort_order: number;
 };
+
+const SECTION_OPTIONS = [
+  { value: "industrial", label: "Промислові підшипники" },
+  { value: "automotive", label: "Автомобільні підшипники" },
+  { value: "agriculture", label: "Підшипники для агротехніки" },
+  { value: "housings", label: "Корпусні вузли" },
+  { value: "seals", label: "Ущільнення" },
+  { value: "components", label: "Комплектуючі" },
+] as const;
 
 function specsToText(value: unknown) {
   return Array.isArray(value)
@@ -122,6 +132,12 @@ export default function ProductForm({
       .replace(/грн/gi, "")
       .replace(",", ".");
     const price = priceText ? Number(priceText) : null;
+    const sections = form
+      .getAll("sections")
+      .map(String)
+      .filter((value) =>
+        SECTION_OPTIONS.some((section) => section.value === value),
+      );
 
     if (price !== null && (!Number.isFinite(price) || price < 0)) {
       setError("Вкажіть коректну ціну або залиште поле порожнім.");
@@ -135,7 +151,8 @@ export default function ProductForm({
       article,
       title,
       description: String(form.get("description") || "").trim(),
-      category: String(form.get("category") || "").trim() || "Підшипники",
+      category: sections[0] || "Підшипники",
+      sections,
       image_url: imageUrl,
       specifications: String(form.get("specifications") || "")
         .split("\n")
@@ -232,14 +249,6 @@ export default function ProductForm({
             />
           </label>
           <label className="text-sm font-medium text-slate-300">
-            Категорія
-            <input
-              name="category"
-              defaultValue={product?.category || "Підшипники"}
-              className={input}
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-300">
             Наявність
             <select
               name="stock_status"
@@ -251,6 +260,31 @@ export default function ProductForm({
               <option>Немає в наявності</option>
             </select>
           </label>
+          <div className="md:col-span-2">
+            <p className="text-sm font-medium text-slate-300">
+              Секції каталогу
+            </p>
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              Позначте одну або кілька секцій, у яких потрібно показувати товар.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {SECTION_OPTIONS.map((section) => (
+                <label
+                  key={section.value}
+                  className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-4 py-4 text-sm text-slate-300 transition hover:border-blue-500/40"
+                >
+                  <input
+                    name="sections"
+                    type="checkbox"
+                    value={section.value}
+                    defaultChecked={product?.sections?.includes(section.value)}
+                    className="h-5 w-5 shrink-0 accent-blue-600"
+                  />
+                  {section.label}
+                </label>
+              ))}
+            </div>
+          </div>
           <label className="text-sm font-medium text-slate-300">
             Ціна, грн
             <input
