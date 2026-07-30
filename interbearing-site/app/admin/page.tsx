@@ -11,6 +11,7 @@ type Product = {
   title: string;
   image_url: string | null;
   stock_status: string;
+  price: number | null;
   is_published: boolean;
 };
 
@@ -19,7 +20,7 @@ export default async function AdminPage() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, brand, article, title, image_url, stock_status, is_published, sort_order",
+      "id, brand, article, title, image_url, stock_status, price, is_published, sort_order",
     )
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
@@ -92,6 +93,11 @@ export default async function AdminPage() {
                       </span>
                     </div>
                     <h2 className="mt-3 text-lg font-bold">{product.title}</h2>
+                    <p className="mt-2 font-semibold text-blue-300">
+                      {product.price === null
+                        ? "Ціну уточнюйте"
+                        : `${Number(product.price).toLocaleString("uk-UA")} грн`}
+                    </p>
                   </div>
                   <p className="text-sm text-slate-300">{product.stock_status}</p>
                   <span

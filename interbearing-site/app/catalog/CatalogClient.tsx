@@ -13,6 +13,7 @@ export type CatalogProduct = {
   description: string;
   image_url: string | null;
   stock_status: string;
+  price: number | null;
 };
 
 export default function CatalogClient({
@@ -135,6 +136,11 @@ export default function CatalogClient({
                 </h2>
                 <p className="mt-4 line-clamp-3 leading-7 text-gray-400">
                   {product.description}
+                </p>
+                <p className="mt-5 text-xl font-bold text-white">
+                  {product.price === null
+                    ? "Ціну уточнюйте"
+                    : `${Number(product.price).toLocaleString("uk-UA")} грн`}
                 </p>
                 <div className="mt-auto flex items-center justify-between pt-7">
                   <span className="font-semibold text-blue-400">

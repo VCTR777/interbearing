@@ -12,6 +12,7 @@ type PopularProduct = {
   description: string;
   image_url: string | null;
   stock_status: string;
+  price: number | null;
 };
 
 export default async function PopularProducts() {
@@ -19,7 +20,7 @@ export default async function PopularProducts() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, brand, article, title, description, image_url, stock_status, sort_order",
+      "id, slug, brand, article, title, description, image_url, stock_status, price, sort_order",
     )
     .eq("is_published", true)
     .eq("is_popular", true)
@@ -127,6 +128,11 @@ export default async function PopularProducts() {
 
                   <p className="mt-4 line-clamp-3 flex-1 leading-7 text-slate-400">
                     {product.description}
+                  </p>
+                  <p className="mt-5 text-xl font-bold text-white">
+                    {product.price === null
+                      ? "Ціну уточнюйте"
+                      : `${Number(product.price).toLocaleString("uk-UA")} грн`}
                   </p>
 
                   <Link

@@ -2,7 +2,7 @@
 
 import { ImagePlus, LoaderCircle, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export type ProductFormValue = {
@@ -15,6 +15,7 @@ export type ProductFormValue = {
   image_url: string | null;
   specifications: unknown;
   stock_status: string;
+  price: number | null;
   is_published: boolean;
   is_popular: boolean;
   sort_order: number;
@@ -41,6 +42,7 @@ export default function ProductForm({
 }) {
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const priceInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const isEditing = Boolean(product);
@@ -51,6 +53,7 @@ export default function ProductForm({
     setIsSubmitting(true);
 
     const form = new FormData(event.currentTarget);
+    const rawPriceInput = priceInputRef.current?.value || "";
     const article = String(form.get("article") || "").trim();
     const title = String(form.get("title") || "").trim();
     const brand = String(form.get("brand") || "").trim().toUpperCase();
@@ -113,6 +116,19 @@ export default function ProductForm({
     }
 
     const sortOrder = Number(form.get("sort_order") || 0);
+    const priceText = rawPriceInput
+      .trim()
+      .replace(/\s+/g, "")
+      .replace(/грн/gi, "")
+      .replace(",", ".");
+    const price = priceText ? Number(priceText) : null;
+
+    if (price !== null && (!Number.isFinite(price) || price < 0)) {
+      setError("Вкажіть коректну ціну або залиште поле порожнім.");
+      setIsSubmitting(false);
+      return;
+    }
+
     const values = {
       slug: createSlug(article),
       brand,
@@ -127,6 +143,7 @@ export default function ProductForm({
         .filter(Boolean),
       stock_status:
         String(form.get("stock_status") || "").trim() || "В наявності",
+      price,
       is_published: form.get("is_published") === "on",
       is_popular: form.get("is_popular") === "on",
       sort_order: Number.isFinite(sortOrder) ? sortOrder : 0,
@@ -134,8 +151,17 @@ export default function ProductForm({
     };
 
     const result = product
-      ? await supabase.from("products").update(values).eq("id", product.id)
-      : await supabase.from("products").insert(values);
+      ? await supabase
+          .from("products")
+          .update(values)
+          .eq("id", product.id)
+          .select("id, price")
+          .single()
+      : await supabase
+          .from("products")
+          .insert(values)
+          .select("id, price")
+          .single();
 
     if (result.error) {
       if (uploadedPath) {
@@ -145,6 +171,19 @@ export default function ProductForm({
         result.error.code === "23505"
           ? "Товар із таким артикулом уже існує."
           : `Не вдалося зберегти товар: ${result.error.message}`,
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (
+      price !== null &&
+      (result.data?.price === null ||
+        result.data?.price === undefined ||
+        Number(result.data.price) !== price)
+    ) {
+      setError(
+        "Товар збережено, але Supabase не підтвердив ціну. Перевірте колонку price у таблиці products.",
       );
       setIsSubmitting(false);
       return;
@@ -211,6 +250,21 @@ export default function ProductForm({
               <option>Під замовлення</option>
               <option>Немає в наявності</option>
             </select>
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Ціна, грн
+            <input
+              name="price"
+              ref={priceInputRef}
+              type="text"
+              inputMode="decimal"
+              defaultValue={product?.price ?? ""}
+              placeholder="Наприклад: 1250 або 1250,50"
+              className={input}
+            />
+            <span className="mt-2 block text-xs text-slate-500">
+              Залиште порожнім, щоб показувати «Ціну уточнюйте».
+            </span>
           </label>
           <label className="text-sm font-medium text-slate-300 md:col-span-2">
             Опис
