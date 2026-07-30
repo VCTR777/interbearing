@@ -14,6 +14,7 @@ type Category = {
   text: string;
   label: string;
   icon: LucideIcon;
+  section: string;
 };
 
 const categories: Category[] = [
@@ -22,36 +23,42 @@ const categories: Category[] = [
     text: "Рішення для верстатів, приводів, електродвигунів і виробничих ліній.",
     label: "Промисловість",
     icon: Factory,
+    section: "industrial",
   },
   {
     title: "Автомобільні підшипники",
     text: "Підшипники та вузли для легкового, вантажного й комерційного транспорту.",
     label: "Автотранспорт",
     icon: CarFront,
+    section: "automotive",
   },
   {
     title: "Підшипники для агротехніки",
     text: "Комплектуючі для тракторів, комбайнів, сівалок та іншої аграрної техніки.",
     label: "Агротехніка",
     icon: Tractor,
+    section: "agriculture",
   },
   {
     title: "Корпусні вузли",
     text: "Готові підшипникові вузли для швидкого монтажу та надійної експлуатації.",
     label: "Готові рішення",
     icon: Settings,
+    section: "housings",
   },
   {
     title: "Ущільнення",
     text: "Манжети, сальники та ущільнювальні елементи для захисту механізмів.",
     label: "Захист вузлів",
     icon: Boxes,
+    section: "seals",
   },
   {
     title: "Комплектуючі",
     text: "Супутні деталі й аксесуари для обслуговування підшипникових систем.",
     label: "Супутні товари",
     icon: Package,
+    section: "components",
   },
 ];
 
@@ -102,7 +109,7 @@ export default function Categories() {
             return (
               <Link
                 key={category.title}
-                href="/catalog"
+                href={`/catalog?section=${category.section}`}
                 className="group relative flex min-h-72 flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#151D2B] p-8 transition duration-300 hover:-translate-y-2 hover:border-blue-400/45 hover:shadow-2xl hover:shadow-blue-950/35"
               >
                 <div
