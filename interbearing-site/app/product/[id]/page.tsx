@@ -14,6 +14,7 @@ type Product = {
   image_url: string | null;
   specifications: unknown;
   stock_status: string;
+  price: number | null;
 };
 
 function getSpecifications(value: unknown) {
@@ -32,7 +33,7 @@ export default async function ProductPage({
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, brand, article, title, description, image_url, specifications, stock_status",
+      "id, slug, brand, article, title, description, image_url, specifications, stock_status, price",
     )
     .eq("slug", id)
     .eq("is_published", true)
@@ -97,6 +98,11 @@ export default async function ProductPage({
                 Артикул:{" "}
                 <span className="font-semibold text-white">{product.article}</span>
               </p>
+              <p className="mt-6 text-3xl font-bold text-white">
+                {product.price === null
+                  ? "Ціну уточнюйте"
+                  : `${Number(product.price).toLocaleString("uk-UA")} грн`}
+              </p>
               <p className="mt-8 text-lg leading-8 text-gray-300">
                 {product.description}
               </p>
@@ -126,7 +132,7 @@ export default async function ProductPage({
                     href={contactHref}
                     className="flex-1 rounded-xl bg-blue-600 px-7 py-4 text-center font-semibold hover:bg-blue-500"
                   >
-                    Запросити ціну
+                    Замовити
                   </Link>
                   <Link
                     href="/catalog"
