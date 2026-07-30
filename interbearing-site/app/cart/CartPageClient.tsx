@@ -34,39 +34,24 @@ export default function CartPageClient() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const orderLines = items.map((item, index) => {
-      const itemPrice =
-        item.price === null ? "ціна уточнюється" : formatPrice(item.price);
-      return `${index + 1}. ${item.brand} ${item.article} — ${item.title}; кількість: ${item.quantity}; ціна: ${itemPrice}`;
-    });
-
     const customerComment = String(formData.get("comment") || "").trim();
-    const orderMessage = [
-      "Замовлення з кошика:",
-      "",
-      ...orderLines,
-      "",
-      knownTotal > 0
-        ? `Сума відомих позицій: ${formatPrice(knownTotal)}`
-        : "Потрібно уточнити вартість.",
-      hasUnknownPrices ? "Є позиції, для яких потрібно уточнити ціну." : "",
-      customerComment ? `Коментар клієнта: ${customerComment}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
 
     setIsSubmitting(true);
     setMessage("");
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.get("name"),
           phone: formData.get("phone"),
           email: formData.get("email"),
-          message: orderMessage,
+          comment: customerComment,
+          items: items.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+          })),
           website: formData.get("website"),
           startedAt: Date.now() - 5000,
         }),
