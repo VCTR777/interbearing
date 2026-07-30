@@ -2,6 +2,7 @@ import { ArrowRight, CheckCircle2, PackageSearch } from "lucide-react";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
+import AddToCartButton from "./AddToCartButton";
 
 type PopularProduct = {
   id: string;
@@ -45,17 +46,15 @@ export default async function PopularProducts() {
             <span className="inline-flex rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-300">
               Популярні позиції
             </span>
-
             <h2
               id="popular-products-title"
               className="mt-6 text-4xl font-black tracking-tight sm:text-5xl"
             >
               Найчастіше замовляють
             </h2>
-
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg">
-              Затребувані моделі від перевірених виробників. Для уточнення
-              наявності та ціни залиште заявку.
+              Затребувані моделі від перевірених виробників. Додайте потрібну
+              позицію до кошика або перегляньте детальну інформацію.
             </p>
           </div>
 
@@ -104,7 +103,6 @@ export default async function PopularProducts() {
                   ) : (
                     <PackageSearch className="text-slate-400" size={42} />
                   )}
-
                   <span className="absolute left-5 top-5 rounded-full bg-[#0B0F19]/90 px-4 py-2 text-sm font-bold text-blue-300 shadow-lg backdrop-blur">
                     {product.brand}
                   </span>
@@ -115,17 +113,17 @@ export default async function PopularProducts() {
                     <p className="text-sm font-semibold uppercase tracking-[0.12em] text-blue-300">
                       {product.article}
                     </p>
-
                     <span className="inline-flex items-center gap-1.5 text-sm text-emerald-400">
                       <CheckCircle2 aria-hidden="true" size={16} />
                       {product.stock_status}
                     </span>
                   </div>
 
-                  <h3 className="mt-4 text-2xl font-bold tracking-tight">
-                    {product.title}
-                  </h3>
-
+                  <Link href={`/product/${product.slug}`}>
+                    <h3 className="mt-4 text-2xl font-bold tracking-tight transition hover:text-blue-400">
+                      {product.title}
+                    </h3>
+                  </Link>
                   <p className="mt-4 line-clamp-3 flex-1 leading-7 text-slate-400">
                     {product.description}
                   </p>
@@ -135,17 +133,27 @@ export default async function PopularProducts() {
                       : `${Number(product.price).toLocaleString("uk-UA")} грн`}
                   </p>
 
-                  <Link
-                    href={`/product/${product.slug}`}
-                    className="mt-7 inline-flex items-center justify-between rounded-xl border border-blue-400/25 bg-blue-500/10 px-5 py-4 font-semibold text-white transition hover:border-blue-400/55 hover:bg-blue-600"
-                  >
-                    Детальніше про товар
-                    <ArrowRight
-                      aria-hidden="true"
-                      size={19}
-                      className="text-blue-300 transition group-hover:translate-x-1 group-hover:text-white"
+                  <div className="mt-7 grid gap-3">
+                    <AddToCartButton
+                      product={{
+                        id: product.id,
+                        slug: product.slug,
+                        brand: product.brand,
+                        article: product.article,
+                        title: product.title,
+                        imageUrl: product.image_url,
+                        price: product.price,
+                      }}
+                      className="w-full"
                     />
-                  </Link>
+                    <Link
+                      href={`/product/${product.slug}`}
+                      className="inline-flex items-center justify-between rounded-xl border border-white/10 px-5 py-4 font-semibold text-white transition hover:border-blue-400/55 hover:bg-white/[0.05]"
+                    >
+                      Детальніше про товар
+                      <ArrowRight aria-hidden="true" size={19} />
+                    </Link>
+                  </div>
                 </div>
               </article>
             ))}

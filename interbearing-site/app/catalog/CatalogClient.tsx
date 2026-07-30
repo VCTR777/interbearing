@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
+import AddToCartButton from "../components/AddToCartButton";
 
 export type CatalogProduct = {
   id: string;
@@ -107,51 +108,80 @@ export default function CatalogClient({
       {filteredProducts.length ? (
         <div className="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((product) => (
-            <Link
+            <article
               key={product.id}
-              href={`/product/${product.slug}`}
-              className="group overflow-hidden rounded-3xl border border-white/10 bg-[#151D2B] transition duration-300 hover:-translate-y-2 hover:border-blue-500/60"
+              className="group flex overflow-hidden rounded-3xl border border-white/10 bg-[#151D2B] transition duration-300 hover:-translate-y-2 hover:border-blue-500/60"
             >
-              <div className="flex h-64 items-center justify-center overflow-hidden bg-white">
-                {product.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={product.image_url}
-                    alt={`${product.brand} ${product.article}`}
-                    className="h-full w-full object-contain p-7 transition duration-500 group-hover:scale-110"
-                  />
-                ) : (
-                  <span className="text-gray-400">Фото відсутнє</span>
-                )}
-              </div>
-              <div className="flex min-h-72 flex-col p-7">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="rounded-full bg-blue-600/15 px-3 py-1 text-sm font-bold text-blue-400">
-                    {product.brand}
-                  </span>
-                  <span className="text-sm text-gray-500">{product.article}</span>
+              <div className="flex w-full flex-col">
+                <Link
+                  href={`/product/${product.slug}`}
+                  className="flex h-64 items-center justify-center overflow-hidden bg-white"
+                >
+                  {product.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={product.image_url}
+                      alt={`${product.brand} ${product.article}`}
+                      className="h-full w-full object-contain p-7 transition duration-500 group-hover:scale-110"
+                    />
+                  ) : (
+                    <span className="text-gray-400">Фото відсутнє</span>
+                  )}
+                </Link>
+
+                <div className="flex min-h-80 flex-1 flex-col p-7">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="rounded-full bg-blue-600/15 px-3 py-1 text-sm font-bold text-blue-400">
+                      {product.brand}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {product.article}
+                    </span>
+                  </div>
+
+                  <Link href={`/product/${product.slug}`}>
+                    <h2 className="mt-5 text-2xl font-bold transition hover:text-blue-400">
+                      {product.title}
+                    </h2>
+                  </Link>
+
+                  <p className="mt-4 line-clamp-3 leading-7 text-gray-400">
+                    {product.description}
+                  </p>
+                  <p className="mt-5 text-xl font-bold text-white">
+                    {product.price === null
+                      ? "Ціну уточнюйте"
+                      : `${Number(product.price).toLocaleString("uk-UA")} грн`}
+                  </p>
+
+                  <div className="mt-auto pt-7">
+                    <div className="mb-4 flex items-center justify-between">
+                      <Link
+                        href={`/product/${product.slug}`}
+                        className="font-semibold text-blue-400 hover:text-blue-300"
+                      >
+                        Детальніше →
+                      </Link>
+                      <span className="text-xs text-emerald-400">
+                        {product.stock_status}
+                      </span>
+                    </div>
+                    <AddToCartButton
+                      product={{
+                        id: product.id,
+                        slug: product.slug,
+                        brand: product.brand,
+                        article: product.article,
+                        title: product.title,
+                        imageUrl: product.image_url,
+                        price: product.price,
+                      }}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-                <h2 className="mt-5 text-2xl font-bold group-hover:text-blue-400">
-                  {product.title}
-                </h2>
-                <p className="mt-4 line-clamp-3 leading-7 text-gray-400">
-                  {product.description}
-                </p>
-                <p className="mt-5 text-xl font-bold text-white">
-                  {product.price === null
-                    ? "Ціну уточнюйте"
-                    : `${Number(product.price).toLocaleString("uk-UA")} грн`}
-                </p>
-                <div className="mt-auto flex items-center justify-between pt-7">
-                  <span className="font-semibold text-blue-400">
-                    Переглянути товар →
-                  </span>
-                  <span className="text-xs text-emerald-400">
-                    {product.stock_status}
-                  </span>
-                </div>
               </div>
-            </Link>
+            </article>
           ))}
         </div>
       ) : (
