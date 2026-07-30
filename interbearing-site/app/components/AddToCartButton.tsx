@@ -1,7 +1,8 @@
 "use client";
 
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import { CartProduct, useCart } from "./CartProvider";
+import { useCart } from "./CartProvider";
+import type { CartProduct } from "./CartProvider";
 
 export default function AddToCartButton({
   product,
