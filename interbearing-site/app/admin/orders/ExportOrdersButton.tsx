@@ -112,7 +112,7 @@ export default function ExportOrdersButton({
       type="button"
       disabled={orders.length === 0}
       onClick={exportOrders}
-      className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#111827] px-5 text-sm font-bold text-slate-200 transition hover:border-blue-500/40 hover:bg-blue-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#111827] px-5 text-sm font-bold text-slate-200 transition hover:border-blue-500/40 hover:bg-blue-500/10 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
     >
       <Download size={18} />
       Експорт CSV ({orders.length})

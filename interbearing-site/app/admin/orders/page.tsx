@@ -138,13 +138,13 @@ export default async function OrdersPage({
     <main className="min-h-screen bg-[#080c14] pb-16 text-white">
       <AdminHeader email={user.email} />
 
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
               Панель керування
             </p>
-            <h1 className="mt-3 text-4xl font-bold">Замовлення</h1>
+            <h1 className="mt-3 text-3xl font-bold sm:text-4xl">Замовлення</h1>
             <p className="mt-3 text-slate-400">
               Усього замовлень: {orders.length}
             </p>
@@ -152,7 +152,7 @@ export default async function OrdersPage({
           <ExportOrdersButton orders={filteredOrders} />
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 xl:grid-cols-4">
           {[
             {
               label: "Нові",
@@ -184,10 +184,10 @@ export default async function OrdersPage({
             return (
               <div
                 key={item.label}
-                className="rounded-2xl border border-white/10 bg-[#111827] p-5"
+                className="rounded-2xl border border-white/10 bg-[#111827] p-4 sm:p-5"
               >
                 <Icon className={item.color} size={23} />
-                <p className="mt-4 text-3xl font-black">{item.value}</p>
+                <p className="mt-3 text-2xl font-black sm:mt-4 sm:text-3xl">{item.value}</p>
                 <p className="mt-1 text-sm text-slate-500">{item.label}</p>
               </div>
             );
@@ -299,7 +299,7 @@ export default async function OrdersPage({
           </div>
         )}
 
-        <div className="mt-10 space-y-6">
+        <div className="mt-8 space-y-4 sm:mt-10 sm:space-y-6">
           {filteredOrders.map((order) => {
             const items = getItems(order.items);
             const orderNumber = order.id.slice(0, 8).toUpperCase();
@@ -307,12 +307,12 @@ export default async function OrdersPage({
             return (
               <article
                 key={order.id}
-                className={`overflow-hidden rounded-3xl border bg-[#111827] ${
+                className={`overflow-hidden rounded-2xl border bg-[#111827] sm:rounded-3xl ${
                   statusStyles[order.status] || "border-white/10"
                 }`}
               >
-                <div className="grid gap-5 border-b border-white/10 px-6 py-6 lg:grid-cols-[1fr_220px] lg:items-center">
-                  <div>
+                <div className="grid gap-4 border-b border-white/10 px-4 py-4 sm:gap-5 sm:px-6 sm:py-6 lg:grid-cols-[1fr_220px] lg:items-center">
+                  <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="rounded-full bg-white/5 px-3 py-1 text-sm font-bold text-blue-300">
                         №{orderNumber}
@@ -326,14 +326,14 @@ export default async function OrdersPage({
                       </span>
                     </div>
 
-                    <h2 className="mt-4 text-2xl font-bold">
+                    <h2 className="mt-4 break-words text-xl font-bold sm:text-2xl">
                       {order.customer_name}
                     </h2>
 
-                    <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-400">
+                    <div className="mt-3 flex flex-col gap-2 text-sm text-slate-400 sm:flex-row sm:flex-wrap sm:gap-x-6">
                       <a
                         href={`tel:${order.customer_phone}`}
-                        className="inline-flex items-center gap-2 hover:text-white"
+                        className="inline-flex min-w-0 items-center gap-2 break-all hover:text-white"
                       >
                         <Phone size={16} />
                         {order.customer_phone}
@@ -342,7 +342,7 @@ export default async function OrdersPage({
                       {order.customer_email && (
                         <a
                           href={`mailto:${order.customer_email}`}
-                          className="inline-flex items-center gap-2 hover:text-white"
+                          className="inline-flex min-w-0 items-center gap-2 break-all hover:text-white"
                         >
                           <Mail size={16} />
                           {order.customer_email}
@@ -360,29 +360,29 @@ export default async function OrdersPage({
                   </div>
                 </div>
 
-                <div className="grid gap-7 px-6 py-6 lg:grid-cols-[1fr_280px]">
-                  <div>
+                <div className="grid gap-5 px-4 py-4 sm:gap-7 sm:px-6 sm:py-6 lg:grid-cols-[1fr_280px]">
+                  <div className="min-w-0">
                     <h3 className="flex items-center gap-2 font-bold">
                       <PackageCheck size={19} className="text-blue-400" />
                       Товари
                     </h3>
 
-                    <div className="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10">
+                    <div className="mt-4 min-w-0 divide-y divide-white/10 rounded-2xl border border-white/10">
                       {items.map((item) => (
                         <div
                           key={`${order.id}-${item.product_id}`}
-                          className="grid gap-2 px-4 py-4 sm:grid-cols-[1fr_auto] sm:items-center"
+                          className="grid min-w-0 gap-2 px-3 py-3.5 sm:grid-cols-[1fr_auto] sm:items-center sm:px-4 sm:py-4"
                         >
-                          <div>
-                            <p className="font-semibold">
+                          <div className="min-w-0">
+                            <p className="break-words font-semibold">
                               {item.brand} {item.article}
                             </p>
-                            <p className="mt-1 text-sm text-slate-500">
+                            <p className="mt-1 break-words text-sm text-slate-500">
                               {item.title}
                             </p>
                           </div>
 
-                          <p className="text-sm text-slate-300">
+                          <p className="break-words text-sm text-slate-300 sm:text-right">
                             {item.quantity} шт. ·{" "}
                             {item.price === null
                               ? "ціна уточнюється"
@@ -393,11 +393,11 @@ export default async function OrdersPage({
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-white/10 bg-[#0b1220] p-5">
+                  <div className="min-w-0 rounded-2xl border border-white/10 bg-[#0b1220] p-4 sm:p-5">
                     <p className="text-sm text-slate-500">
                       Сума замовлення
                     </p>
-                    <p className="mt-2 text-2xl font-black">
+                    <p className="mt-2 break-words text-xl font-black sm:text-2xl">
                       {order.total === null
                         ? "Уточнюється"
                         : formatPrice(Number(order.total))}
