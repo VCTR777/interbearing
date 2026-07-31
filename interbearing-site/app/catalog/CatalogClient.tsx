@@ -19,6 +19,12 @@ export type CatalogProduct = {
   sections: string[] | null;
 };
 
+function stockTextColor(status: string) {
+  if (status === "Немає в наявності") return "text-red-400";
+  if (status === "Під замовлення") return "text-amber-400";
+  return "text-emerald-400";
+}
+
 const SECTION_OPTIONS = [
   { value: "", label: "Усі секції" },
   { value: "industrial", label: "Промислові підшипники" },
@@ -381,9 +387,13 @@ export default function CatalogClient({
                       >
                         Детальніше →
                       </Link>
-                      <span className="text-right text-xs text-emerald-400">
-                        {product.stock_status}
-                      </span>
+                        <span
+                          className={`text-right text-xs ${stockTextColor(
+                            product.stock_status,
+                          )}`}
+                        >
+                          {product.stock_status}
+                        </span>
                     </div>
                     <AddToCartButton
                       product={{

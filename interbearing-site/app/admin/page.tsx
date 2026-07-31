@@ -17,6 +17,12 @@ type Product = {
   is_published: boolean;
 };
 
+function stockTextColor(status: string) {
+  if (status === "Немає в наявності") return "text-red-300";
+  if (status === "Під замовлення") return "text-amber-300";
+  return "text-emerald-300";
+}
+
 export default async function AdminPage() {
   const { supabase, user } = await requireAdmin();
   const { data, error } = await supabase
@@ -104,9 +110,13 @@ export default async function AdminPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-300">
-                      {product.stock_status}
-                    </p>
+                      <p
+                        className={`text-sm font-semibold ${stockTextColor(
+                          product.stock_status,
+                        )}`}
+                      >
+                        {product.stock_status}
+                      </p>
                     <p
                       className={`mt-2 text-sm font-semibold ${
                         product.stock_quantity === 0

@@ -16,6 +16,12 @@ type PopularProduct = {
   price: number | null;
 };
 
+function stockTextColor(status: string) {
+  if (status === "Немає в наявності") return "text-red-400";
+  if (status === "Під замовлення") return "text-amber-400";
+  return "text-emerald-400";
+}
+
 export default async function PopularProducts() {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -113,7 +119,11 @@ export default async function PopularProducts() {
                     <p className="text-sm font-semibold uppercase tracking-[0.12em] text-blue-300">
                       {product.article}
                     </p>
-                    <span className="inline-flex items-center gap-1.5 text-sm text-emerald-400">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-sm ${stockTextColor(
+                          product.stock_status,
+                        )}`}
+                      >
                       <CheckCircle2 aria-hidden="true" size={16} />
                       {product.stock_status}
                     </span>

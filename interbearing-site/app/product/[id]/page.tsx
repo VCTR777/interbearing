@@ -18,6 +18,16 @@ type Product = {
   price: number | null;
 };
 
+function stockBadgeClass(status: string) {
+  if (status === "Немає в наявності") {
+    return "border-red-500/30 bg-red-500/10 text-red-400";
+  }
+  if (status === "Під замовлення") {
+    return "border-amber-500/30 bg-amber-500/10 text-amber-400";
+  }
+  return "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
+}
+
 function getSpecifications(value: unknown) {
   return Array.isArray(value)
     ? value.filter((item): item is string => typeof item === "string")
@@ -84,9 +94,13 @@ export default async function ProductPage({
                 <span className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold">
                   {product.brand}
                 </span>
-                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-400">
-                  {product.stock_status}
-                </span>
+                  <span
+                    className={`rounded-full border px-4 py-2 text-sm font-semibold ${stockBadgeClass(
+                      product.stock_status,
+                    )}`}
+                  >
+                    {product.stock_status}
+                  </span>
               </div>
               <h1 className="mt-6 text-4xl font-bold md:text-5xl">
                 {product.title}
