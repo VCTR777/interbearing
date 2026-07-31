@@ -18,14 +18,6 @@ type OrderPayload = {
   startedAt?: unknown;
 };
 
-type ProductRow = {
-  id: string;
-  brand: string;
-  article: string;
-  title: string;
-  price: number | null;
-};
-
 type OrderItemSnapshot = {
   product_id: string;
   brand: string;
@@ -34,6 +26,13 @@ type OrderItemSnapshot = {
   price: number | null;
   quantity: number;
   line_total: number | null;
+};
+
+type OrderRpcResult = {
+  order_id: string;
+  order_items: unknown;
+  order_total: number | null;
+  has_unknown_prices: boolean;
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,6 +76,27 @@ function parseItems(value: unknown) {
     );
 
   return items.length === value.length ? items : null;
+}
+
+function stockErrorMessage(message: string) {
+  if (message.startsWith("INSUFFICIENT_STOCK:")) {
+    const [, article, available] = message.split(":");
+    return `Недостатньо товару ${article}. Доступно: ${available || 0} шт.`;
+  }
+  if (message.startsWith("PRODUCT_UNAVAILABLE:")) {
+    const [, article] = message.split(":");
+    return `Товар ${article} зараз недоступний для замовлення.`;
+  }
+  if (message === "PRODUCT_NOT_FOUND") {
+    return "Один із товарів більше не доступний. Оновіть кошик.";
+  }
+  if (
+    message === "INVALID_ORDER_ITEMS" ||
+    message === "INVALID_ORDER_QUANTITY"
+  ) {
+    return "Кошик містить некоректну кількість товару.";
+  }
+  return "Не вдалося зберегти замовлення. Спробуйте ще раз.";
 }
 
 function createOrderText(
@@ -229,63 +249,52 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient();
-    const ids = [...new Set(requestedItems.map((item) => item.id))];
-    const { data: productData, error: productError } = await supabase
-      .from("products")
-      .select("id, brand, article, title, price")
-      .in("id", ids)
-      .eq("is_published", true);
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      "create_order_with_stock",
+      {
+        p_customer_name: name,
+        p_customer_phone: phone,
+        p_customer_email: email || "",
+        p_comment: comment || "",
+        p_items: requestedItems,
+      },
+    );
 
-    if (productError || !productData || productData.length !== ids.length) {
+    if (rpcError) {
+      console.error("Atomic order creation failed", rpcError);
+      const isStockProblem =
+        rpcError.message.startsWith("INSUFFICIENT_STOCK:") ||
+        rpcError.message.startsWith("PRODUCT_UNAVAILABLE:") ||
+        rpcError.message === "PRODUCT_NOT_FOUND" ||
+        rpcError.message === "INVALID_ORDER_ITEMS" ||
+        rpcError.message === "INVALID_ORDER_QUANTITY";
+
       return NextResponse.json(
-        { message: "Не вдалося перевірити товари. Оновіть кошик." },
-        { status: 400 },
+        { message: stockErrorMessage(rpcError.message) },
+        { status: isStockProblem ? 409 : 500 },
       );
     }
 
-    const products = productData as ProductRow[];
-    const items: OrderItemSnapshot[] = requestedItems.map((requestedItem) => {
-      const product = products.find((item) => item.id === requestedItem.id)!;
-      const price = product.price === null ? null : Number(product.price);
-      return {
-        product_id: product.id,
-        brand: product.brand,
-        article: product.article,
-        title: product.title,
-        price,
-        quantity: requestedItem.quantity,
-        line_total: price === null ? null : price * requestedItem.quantity,
-      };
-    });
+    const rpcResult = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as
+      | OrderRpcResult
+      | null;
 
-    const hasUnknownPrices = items.some((item) => item.price === null);
-    const knownTotal = items.reduce(
-      (sum, item) => sum + (item.line_total ?? 0),
-      0,
-    );
-    const total = knownTotal > 0 ? knownTotal : null;
-    const orderId = crypto.randomUUID();
-    const orderNumber = orderId.slice(0, 8).toUpperCase();
-
-    const { error: insertError } = await supabase.from("orders").insert({
-      id: orderId,
-      customer_name: name,
-      customer_phone: phone,
-      customer_email: email || null,
-      comment: comment || null,
-      items,
-      total,
-      has_unknown_prices: hasUnknownPrices,
-      status: "new",
-    });
-
-    if (insertError) {
-      console.error("Order database insert failed", insertError);
+    if (!rpcResult || !Array.isArray(rpcResult.order_items)) {
+      console.error("Atomic order creation returned invalid data", rpcData);
       return NextResponse.json(
-        { message: "Не вдалося зберегти замовлення. Спробуйте ще раз." },
+        { message: "Не вдалося підтвердити замовлення." },
         { status: 500 },
       );
     }
+
+    const orderId = rpcResult.order_id;
+    const items = rpcResult.order_items as OrderItemSnapshot[];
+    const total =
+      rpcResult.order_total === null
+        ? null
+        : Number(rpcResult.order_total);
+    const hasUnknownPrices = rpcResult.has_unknown_prices;
+    const orderNumber = orderId.slice(0, 8).toUpperCase();
 
     const customer = { name, phone, email, comment };
     const text = createOrderText(
