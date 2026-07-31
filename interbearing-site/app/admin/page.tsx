@@ -12,6 +12,7 @@ type Product = {
   title: string;
   image_url: string | null;
   stock_status: string;
+  stock_quantity: number | null;
   price: number | null;
   is_published: boolean;
 };
@@ -21,7 +22,7 @@ export default async function AdminPage() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, brand, article, title, image_url, stock_status, price, is_published, sort_order",
+      "id, brand, article, title, image_url, stock_status, stock_quantity, price, is_published, sort_order",
     )
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
@@ -102,7 +103,24 @@ export default async function AdminPage() {
                         : `${Number(product.price).toLocaleString("uk-UA")} грн`}
                     </p>
                   </div>
-                  <p className="text-sm text-slate-300">{product.stock_status}</p>
+                  <div>
+                    <p className="text-sm text-slate-300">
+                      {product.stock_status}
+                    </p>
+                    <p
+                      className={`mt-2 text-sm font-semibold ${
+                        product.stock_quantity === 0
+                          ? "text-red-300"
+                          : product.stock_quantity === null
+                            ? "text-slate-500"
+                            : "text-emerald-300"
+                      }`}
+                    >
+                      {product.stock_quantity === null
+                        ? "Залишок не вказано"
+                        : `На складі: ${product.stock_quantity} шт.`}
+                    </p>
+                  </div>
                   <span
                     className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
                       product.is_published

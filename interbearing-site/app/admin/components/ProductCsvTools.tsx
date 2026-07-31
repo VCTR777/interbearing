@@ -21,6 +21,7 @@ const HEADERS = [
   "image_url",
   "specifications",
   "stock_status",
+  "stock_quantity",
   "price",
   "is_published",
   "is_popular",
@@ -136,6 +137,7 @@ export default function ProductCsvTools() {
       "",
       "Внутрішній діаметр: 25 мм|Зовнішній діаметр: 52 мм",
       "В наявності",
+      "25",
       "1250",
       "true",
       "false",
@@ -217,7 +219,7 @@ export default function ProductCsvTools() {
       const supabase = createClient();
       const { data: existingProducts, error: loadError } = await supabase
         .from("products")
-        .select("id, article, image_url");
+        .select("id, article, image_url, stock_quantity");
 
       if (loadError) {
         throw new Error(`Не вдалося перевірити товари: ${loadError.message}`);
@@ -225,7 +227,11 @@ export default function ProductCsvTools() {
 
       const existingByArticle = new Map<
         string,
-        { id: string; imageUrl: string | null }
+        {
+          id: string;
+          imageUrl: string | null;
+          stockQuantity: number | null;
+        }
       >(
         (existingProducts || []).map((product) => [
           String(product.article).toLowerCase(),
@@ -234,6 +240,10 @@ export default function ProductCsvTools() {
             imageUrl:
               typeof product.image_url === "string"
                 ? product.image_url
+                : null,
+            stockQuantity:
+              typeof product.stock_quantity === "number"
+                ? product.stock_quantity
                 : null,
           },
         ]),
@@ -248,6 +258,10 @@ export default function ProductCsvTools() {
           .replace(/грн/gi, "")
           .replace(",", ".");
         const price = priceText ? Number(priceText) : null;
+        const stockQuantityText = (row.stock_quantity || "").trim();
+        const importedStockQuantity = stockQuantityText
+          ? Number(stockQuantityText)
+          : null;
         const sortOrder = row.sort_order ? Number(row.sort_order) : 0;
         const sections = row.sections
           .split("|")
@@ -257,6 +271,15 @@ export default function ProductCsvTools() {
         if (price !== null && (!Number.isFinite(price) || price < 0)) {
           throw new Error(`Рядок ${index + 2}: некоректна ціна.`);
         }
+        if (
+          importedStockQuantity !== null &&
+          (!Number.isInteger(importedStockQuantity) ||
+            importedStockQuantity < 0)
+        ) {
+          throw new Error(
+            `Рядок ${index + 2}: некоректна кількість на складі.`,
+          );
+        }
         if (!Number.isFinite(sortOrder)) {
           throw new Error(`Рядок ${index + 2}: некоректний порядок показу.`);
         }
@@ -264,6 +287,18 @@ export default function ProductCsvTools() {
         const existingProduct = existingByArticle.get(
           row.article.toLowerCase(),
         );
+        const stockQuantity =
+          stockQuantityText === ""
+            ? existingProduct?.stockQuantity ?? null
+            : importedStockQuantity;
+        const manualStockStatus =
+          row.stock_status?.trim() || "В наявності";
+        const stockStatus =
+          stockQuantity === null
+            ? manualStockStatus
+            : stockQuantity === 0
+              ? "Немає в наявності"
+              : "В наявності";
         const values = {
           slug: createSlug(row.article),
           brand: row.brand,
@@ -278,7 +313,8 @@ export default function ProductCsvTools() {
             .split("|")
             .map((value) => value.trim())
             .filter(Boolean),
-          stock_status: row.stock_status?.trim() || "В наявності",
+          stock_status: stockStatus,
+          stock_quantity: stockQuantity,
           price,
           is_published: toBoolean(row.is_published || "", true),
           is_popular: toBoolean(row.is_popular || "", false),

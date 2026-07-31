@@ -16,6 +16,7 @@ export type ProductFormValue = {
   image_url: string | null;
   specifications: unknown;
   stock_status: string;
+  stock_quantity: number | null;
   price: number | null;
   is_published: boolean;
   is_popular: boolean;
@@ -126,6 +127,12 @@ export default function ProductForm({
     }
 
     const sortOrder = Number(form.get("sort_order") || 0);
+    const stockQuantityText = String(
+      form.get("stock_quantity") || "",
+    ).trim();
+    const stockQuantity = stockQuantityText
+      ? Number(stockQuantityText)
+      : null;
     const priceText = rawPriceInput
       .trim()
       .replace(/\s+/g, "")
@@ -145,6 +152,26 @@ export default function ProductForm({
       return;
     }
 
+    if (
+      stockQuantity !== null &&
+      (!Number.isInteger(stockQuantity) || stockQuantity < 0)
+    ) {
+      setError(
+        "Кількість на складі повинна бути цілим невід’ємним числом.",
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    const manualStockStatus =
+      String(form.get("stock_status") || "").trim() || "В наявності";
+    const stockStatus =
+      stockQuantity === null
+        ? manualStockStatus
+        : stockQuantity === 0
+          ? "Немає в наявності"
+          : "В наявності";
+
     const values = {
       slug: createSlug(article),
       brand,
@@ -158,8 +185,8 @@ export default function ProductForm({
         .split("\n")
         .map((line) => line.trim())
         .filter(Boolean),
-      stock_status:
-        String(form.get("stock_status") || "").trim() || "В наявності",
+      stock_status: stockStatus,
+      stock_quantity: stockQuantity,
       price,
       is_published: form.get("is_published") === "on",
       is_popular: form.get("is_popular") === "on",
@@ -172,12 +199,12 @@ export default function ProductForm({
           .from("products")
           .update(values)
           .eq("id", product.id)
-          .select("id, price")
+          .select("id, price, stock_quantity")
           .single()
       : await supabase
           .from("products")
           .insert(values)
-          .select("id, price")
+          .select("id, price, stock_quantity")
           .single();
 
     if (result.error) {
@@ -259,6 +286,22 @@ export default function ProductForm({
               <option>Під замовлення</option>
               <option>Немає в наявності</option>
             </select>
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Кількість на складі
+            <input
+              name="stock_quantity"
+              type="number"
+              min="0"
+              step="1"
+              defaultValue={product?.stock_quantity ?? ""}
+              placeholder="Наприклад: 25"
+              className={input}
+            />
+            <span className="mt-2 block text-xs leading-5 text-slate-500">
+              Залиште порожнім, якщо точний залишок поки не ведеться.
+              Значення 0 автоматично встановить статус «Немає в наявності».
+            </span>
           </label>
           <div className="md:col-span-2">
             <p className="text-sm font-medium text-slate-300">
