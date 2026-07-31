@@ -27,23 +27,49 @@ export default function OrderStatusSelect({
   async function updateStatus(nextStatus: string) {
     if (nextStatus === currentStatus || isSaving) return;
 
+    if (
+      nextStatus === "cancelled" &&
+      !window.confirm(
+        "Скасувати замовлення та повернути зарезервований товар на склад?",
+      )
+    ) {
+      return;
+    }
+
+    if (
+      currentStatus === "cancelled" &&
+      nextStatus !== "cancelled" &&
+      !window.confirm(
+        "Відновити замовлення? Товар буде повторно списано зі складу.",
+      )
+    ) {
+      return;
+    }
+
     const previousStatus = currentStatus;
     setCurrentStatus(nextStatus);
     setIsSaving(true);
     setError("");
 
     const supabase = createClient();
-    const { error: updateError } = await supabase
-      .from("orders")
-      .update({
-        status: nextStatus,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id);
+    const { error: updateError } = await supabase.rpc(
+      "update_order_status_with_stock",
+      {
+        p_order_id: id,
+        p_new_status: nextStatus,
+      },
+    );
 
     if (updateError) {
       setCurrentStatus(previousStatus);
-      setError("Не вдалося змінити статус.");
+      if (updateError.message.startsWith("INSUFFICIENT_STOCK:")) {
+        const [, article, available] = updateError.message.split(":");
+        setError(
+          `Не вистачає ${article}. На складі: ${available || 0} шт.`,
+        );
+      } else {
+        setError("Не вдалося змінити статус.");
+      }
     } else {
       router.refresh();
     }
