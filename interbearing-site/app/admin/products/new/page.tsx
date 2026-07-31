@@ -10,7 +10,7 @@ export default async function NewProductPage() {
   return (
     <main className="min-h-screen bg-[#080c14] pb-16 text-white">
       <AdminHeader email={user.email} />
-      <section className="mx-auto max-w-5xl px-5 py-10 sm:px-6">
+      <section className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
         <Link
           href="/admin"
           className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-white"
@@ -18,7 +18,7 @@ export default async function NewProductPage() {
           <ArrowLeft size={18} />
           До списку товарів
         </Link>
-        <h1 className="mt-6 text-4xl font-bold">Додати товар</h1>
+        <h1 className="mt-6 text-3xl font-bold sm:text-4xl">Додати товар</h1>
         <p className="mt-3 text-slate-400">
           Заповніть інформацію, додайте фотографію та опублікуйте товар.
         </p>

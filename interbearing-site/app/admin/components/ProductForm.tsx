@@ -253,10 +253,10 @@ export default function ProductForm({
     "mt-2 h-13 w-full rounded-xl border border-white/10 bg-[#0b1220] px-4 text-white outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-8">
-      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+    <form onSubmit={handleSubmit} className="mt-6 space-y-5 sm:mt-8 sm:space-y-8">
+      <section className="rounded-2xl border border-white/10 bg-[#111827] p-4 sm:rounded-3xl sm:p-8">
         <h2 className="text-xl font-bold">Основна інформація</h2>
-        <div className="mt-6 grid gap-5 md:grid-cols-2">
+        <div className="mt-5 grid gap-4 md:mt-6 md:grid-cols-2 md:gap-5">
           <label className="text-sm font-medium text-slate-300">
             Бренд *
             <input
@@ -341,7 +341,7 @@ export default function ProductForm({
               {SECTION_OPTIONS.map((section) => (
                 <label
                   key={section.value}
-                  className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-4 py-4 text-sm text-slate-300 transition hover:border-blue-500/40"
+                  className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-[#0b1220] px-3 py-3.5 text-sm text-slate-300 transition hover:border-blue-500/40 sm:px-4 sm:py-4"
                 >
                   <input
                     name="sections"
@@ -382,10 +382,10 @@ export default function ProductForm({
         </div>
       </section>
 
-      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+      <section className="rounded-2xl border border-white/10 bg-[#111827] p-4 sm:rounded-3xl sm:p-8">
         <h2 className="text-xl font-bold">Фото та характеристики</h2>
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <label className="flex min-h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-blue-400/30 bg-blue-500/[0.05] px-5 text-center hover:bg-blue-500/10">
+          <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-blue-400/30 bg-blue-500/[0.05] px-4 text-center hover:bg-blue-500/10 sm:min-h-48 sm:px-5">
             <ImagePlus className="text-blue-400" size={34} />
             <span className="mt-3 font-semibold">
               {imageFile
@@ -422,7 +422,7 @@ export default function ProductForm({
         </div>
       </section>
 
-      <section className="rounded-3xl border border-white/10 bg-[#111827] p-6 sm:p-8">
+      <section className="rounded-2xl border border-white/10 bg-[#111827] p-4 sm:rounded-3xl sm:p-8">
         <div className="grid gap-5 md:grid-cols-3">
           <label className="flex items-center gap-3 text-sm text-slate-300">
             <input
@@ -464,14 +464,14 @@ export default function ProductForm({
         <button
           type="button"
           onClick={() => router.push("/admin")}
-          className="h-13 rounded-xl border border-white/10 px-6 font-semibold text-slate-300"
+          className="h-13 w-full rounded-xl border border-white/10 px-6 font-semibold text-slate-300 sm:w-auto"
         >
           Скасувати
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 font-semibold hover:bg-blue-500 disabled:opacity-60"
+          className="inline-flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 font-semibold hover:bg-blue-500 disabled:opacity-60 sm:w-auto"
         >
           {isSubmitting ? (
             <LoaderCircle className="animate-spin" size={20} />
