@@ -1,4 +1,4 @@
-import { Edit3, ImageIcon, PackagePlus } from "lucide-react";
+import { AlertTriangle, Edit3, ImageIcon, PackagePlus, PackageX } from "lucide-react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import AdminHeader from "./components/AdminHeader";
@@ -13,6 +13,7 @@ type Product = {
   image_url: string | null;
   stock_status: string;
   stock_quantity: number | null;
+  low_stock_threshold: number;
   price: number | null;
   is_published: boolean;
 };
@@ -28,11 +29,20 @@ export default async function AdminPage() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, brand, article, title, image_url, stock_status, stock_quantity, price, is_published, sort_order",
+      "id, brand, article, title, image_url, stock_status, stock_quantity, low_stock_threshold, price, is_published, sort_order",
     )
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
   const products = (data || []) as Product[];
+  const outOfStockCount = products.filter(
+    (product) => product.stock_quantity === 0,
+  ).length;
+  const lowStockCount = products.filter(
+    (product) =>
+      product.stock_quantity !== null &&
+      product.stock_quantity > 0 &&
+      product.stock_quantity <= product.low_stock_threshold,
+  ).length;
 
   return (
     <main className="min-h-screen bg-[#080c14] pb-16 text-white">
@@ -56,6 +66,31 @@ export default async function AdminPage() {
         </div>
 
         <ProductCsvTools />
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-[#111827] p-5">
+            <p className="text-sm text-slate-400">Усього товарів</p>
+            <p className="mt-2 text-3xl font-bold">{products.length}</p>
+          </div>
+          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
+            <div className="flex items-center gap-2 text-amber-300">
+              <AlertTriangle size={18} />
+              <p className="text-sm font-semibold">Закінчуються</p>
+            </div>
+            <p className="mt-2 text-3xl font-bold text-amber-300">
+              {lowStockCount}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5">
+            <div className="flex items-center gap-2 text-red-300">
+              <PackageX size={18} />
+              <p className="text-sm font-semibold">Закінчилися</p>
+            </div>
+            <p className="mt-2 text-3xl font-bold text-red-300">
+              {outOfStockCount}
+            </p>
+          </div>
+        </div>
 
         {error && (
           <p className="mt-8 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-300">
@@ -130,6 +165,20 @@ export default async function AdminPage() {
                         ? "Залишок не вказано"
                         : `На складі: ${product.stock_quantity} шт.`}
                     </p>
+                    {product.stock_quantity !== null &&
+                      product.stock_quantity > 0 &&
+                      product.stock_quantity <= product.low_stock_threshold && (
+                        <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-300">
+                          <AlertTriangle size={14} />
+                          Мало на складі · мін. {product.low_stock_threshold}
+                        </p>
+                      )}
+                    {product.stock_quantity === 0 && (
+                      <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-3 py-1 text-xs font-bold text-red-300">
+                        <PackageX size={14} />
+                        Товар закінчився
+                      </p>
+                    )}
                   </div>
                   <span
                     className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${

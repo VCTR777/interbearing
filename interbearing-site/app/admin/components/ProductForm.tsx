@@ -17,6 +17,7 @@ export type ProductFormValue = {
   specifications: unknown;
   stock_status: string;
   stock_quantity: number | null;
+  low_stock_threshold: number;
   price: number | null;
   is_published: boolean;
   is_popular: boolean;
@@ -133,6 +134,10 @@ export default function ProductForm({
     const stockQuantity = stockQuantityText
       ? Number(stockQuantityText)
       : null;
+    const lowStockThresholdText = String(
+      form.get("low_stock_threshold") || "3",
+    ).trim();
+    const lowStockThreshold = Number(lowStockThresholdText);
     const priceText = rawPriceInput
       .trim()
       .replace(/\s+/g, "")
@@ -163,6 +168,12 @@ export default function ProductForm({
       return;
     }
 
+    if (!Number.isInteger(lowStockThreshold) || lowStockThreshold < 0) {
+      setError("Мінімальний залишок повинен бути цілим невід’ємним числом.");
+      setIsSubmitting(false);
+      return;
+    }
+
     const manualStockStatus =
       String(form.get("stock_status") || "").trim() || "В наявності";
     const stockStatus =
@@ -187,6 +198,7 @@ export default function ProductForm({
         .filter(Boolean),
       stock_status: stockStatus,
       stock_quantity: stockQuantity,
+      low_stock_threshold: lowStockThreshold,
       price,
       is_published: form.get("is_published") === "on",
       is_popular: form.get("is_popular") === "on",
@@ -301,6 +313,21 @@ export default function ProductForm({
             <span className="mt-2 block text-xs leading-5 text-slate-500">
               Залиште порожнім, якщо точний залишок поки не ведеться.
               Значення 0 автоматично встановить статус «Немає в наявності».
+            </span>
+          </label>
+          <label className="text-sm font-medium text-slate-300">
+            Мінімальний залишок
+            <input
+              name="low_stock_threshold"
+              type="number"
+              min="0"
+              step="1"
+              required
+              defaultValue={product?.low_stock_threshold ?? 3}
+              className={input}
+            />
+            <span className="mt-2 block text-xs leading-5 text-slate-500">
+              При цьому залишку товар буде позначено як такий, що закінчується.
             </span>
           </label>
           <div className="md:col-span-2">
