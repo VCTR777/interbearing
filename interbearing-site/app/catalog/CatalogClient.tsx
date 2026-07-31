@@ -191,7 +191,7 @@ export default function CatalogClient({
 
   return (
     <>
-      <section className="mt-12 rounded-3xl border border-white/10 bg-[#111827] p-5 md:p-7">
+      <section className="mt-10 rounded-3xl border border-white/10 bg-[#111827] p-4 sm:mt-12 sm:p-5 md:p-7">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
@@ -208,7 +208,7 @@ export default function CatalogClient({
             <button
               type="button"
               onClick={resetFilters}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-gray-300 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-gray-300 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300 sm:w-auto"
             >
               <RotateCcw aria-hidden="true" size={17} />
               Скинути всі
@@ -315,12 +315,12 @@ export default function CatalogClient({
             {filteredProducts.length}
           </span>
         </p>
-        <label className="flex items-center gap-3 text-sm text-gray-400">
+        <label className="flex w-full flex-col items-stretch gap-2 text-sm text-gray-400 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
           Сортування
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortValue)}
-            className="h-11 rounded-xl border border-white/10 bg-[#111827] px-4 text-white outline-none focus:border-blue-500"
+            className="h-11 w-full rounded-xl border border-white/10 bg-[#111827] px-4 text-white outline-none focus:border-blue-500 sm:w-auto"
           >
             <option value="default">За замовчуванням</option>
             <option value="price-asc">Від дешевих до дорогих</option>
@@ -341,22 +341,22 @@ export default function CatalogClient({
               <div className="flex w-full flex-col">
                 <Link
                   href={`/product/${product.slug}`}
-                  className="flex h-64 items-center justify-center overflow-hidden bg-white"
+                  className="flex h-56 items-center justify-center overflow-hidden bg-white sm:h-64"
                 >
                   {product.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={product.image_url}
                       alt={`${product.brand} ${product.article}`}
-                      className="h-full w-full object-contain p-7 transition duration-500 group-hover:scale-110"
+                      className="h-full w-full object-contain p-5 transition duration-500 group-hover:scale-110 sm:p-7"
                     />
                   ) : (
                     <span className="text-gray-400">Фото відсутнє</span>
                   )}
                 </Link>
 
-                <div className="flex min-h-80 flex-1 flex-col p-7">
-                  <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-1 flex-col p-5 sm:min-h-80 sm:p-7">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <span className="rounded-full bg-blue-600/15 px-3 py-1 text-sm font-bold text-blue-400">
                       {product.brand}
                     </span>
@@ -366,7 +366,7 @@ export default function CatalogClient({
                   </div>
 
                   <Link href={`/product/${product.slug}`}>
-                    <h2 className="mt-5 text-2xl font-bold transition hover:text-blue-400">
+                    <h2 className="mt-5 break-words text-xl font-bold transition hover:text-blue-400 sm:text-2xl">
                       {product.title}
                     </h2>
                   </Link>
@@ -381,7 +381,7 @@ export default function CatalogClient({
                   </p>
 
                   <div className="mt-auto pt-7">
-                    <div className="mb-4 flex items-center justify-between gap-3">
+                    <div className="mb-4 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                       <Link
                         href={`/product/${product.slug}`}
                         className="font-semibold text-blue-400 hover:text-blue-300"
@@ -389,7 +389,7 @@ export default function CatalogClient({
                         Детальніше →
                       </Link>
                         <span
-                          className={`text-right text-xs ${stockTextColor(
+                          className={`text-left text-xs sm:text-right ${stockTextColor(
                             product.stock_status,
                           )}`}
                         >
@@ -418,7 +418,7 @@ export default function CatalogClient({
           ))}
         </div>
       ) : (
-        <div className="mt-10 rounded-3xl border border-white/10 bg-[#151D2B] px-6 py-20 text-center">
+        <div className="mt-10 rounded-3xl border border-white/10 bg-[#151D2B] px-5 py-14 text-center sm:px-6 sm:py-20">
           <h2 className="text-2xl font-bold">Товари не знайдено</h2>
           <p className="mt-3 text-gray-400">
             Змініть параметри пошуку або скиньте активні фільтри.

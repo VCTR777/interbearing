@@ -65,8 +65,8 @@ export default async function ProductPage({
     <>
       <Navbar />
       <main className="min-h-screen bg-[#0B0F19] pt-28 text-white">
-        <section className="mx-auto max-w-7xl px-6 pb-20">
-          <nav className="mb-8 flex gap-2 text-sm text-gray-500">
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-20">
+          <nav className="mb-6 flex flex-wrap gap-2 text-sm text-gray-500 sm:mb-8">
             <Link href="/">Головна</Link>
             <span>/</span>
             <Link href="/catalog">Каталог</Link>
@@ -74,15 +74,15 @@ export default async function ProductPage({
             <span className="text-gray-300">{product.article}</span>
           </nav>
 
-          <div className="grid items-start gap-12 lg:grid-cols-2">
-            <div className="rounded-3xl border border-white/10 bg-[#151D2B] p-5 md:p-8">
-              <div className="flex min-h-96 items-center justify-center overflow-hidden rounded-2xl bg-white md:min-h-[520px]">
+          <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+            <div className="rounded-3xl border border-white/10 bg-[#151D2B] p-3 sm:p-5 md:p-8">
+              <div className="flex min-h-72 items-center justify-center overflow-hidden rounded-2xl bg-white sm:min-h-96 md:min-h-[520px]">
                 {product.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={product.image_url}
                     alt={`${product.brand} ${product.article}`}
-                    className="h-full max-h-[520px] w-full object-contain p-8"
+                    className="h-full max-h-[520px] w-full object-contain p-4 sm:p-8"
                   />
                 ) : (
                   <span className="text-gray-400">Фото відсутнє</span>
@@ -105,37 +105,37 @@ export default async function ProductPage({
                       ` · ${product.stock_quantity} шт.`}
                   </span>
               </div>
-              <h1 className="mt-6 text-4xl font-bold md:text-5xl">
+              <h1 className="mt-6 break-words text-3xl font-bold sm:text-4xl md:text-5xl">
                 {product.title}
               </h1>
-              <p className="mt-4 text-xl text-gray-400">
+              <p className="mt-4 break-words text-lg text-gray-400 sm:text-xl">
                 Артикул:{" "}
                 <span className="font-semibold text-white">{product.article}</span>
               </p>
-              <p className="mt-6 text-3xl font-bold text-white">
+              <p className="mt-6 text-2xl font-bold text-white sm:text-3xl">
                 {product.price === null
                   ? "Ціну уточнюйте"
                   : `${Number(product.price).toLocaleString("uk-UA")} грн`}
               </p>
-              <p className="mt-8 text-lg leading-8 text-gray-300">
+              <p className="mt-6 text-base leading-7 text-gray-300 sm:mt-8 sm:text-lg sm:leading-8">
                 {product.description}
               </p>
 
               <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-[#151D2B]">
-                <div className="border-b border-white/10 px-6 py-5">
-                  <h2 className="text-2xl font-bold">Характеристики</h2>
+                <div className="border-b border-white/10 px-4 py-4 sm:px-6 sm:py-5">
+                  <h2 className="text-xl font-bold sm:text-2xl">Характеристики</h2>
                 </div>
                 <ul className="divide-y divide-white/10">
                   {getSpecifications(product.specifications).map((spec) => (
-                    <li key={spec} className="px-6 py-4 text-gray-300">
+                    <li key={spec} className="break-words px-4 py-4 text-gray-300 sm:px-6">
                       {spec}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="mt-10 rounded-3xl border border-blue-500/20 bg-blue-600/10 p-7">
-                <h2 className="text-2xl font-bold">Додати товар до кошика</h2>
+              <div className="mt-8 rounded-3xl border border-blue-500/20 bg-blue-600/10 p-5 sm:mt-10 sm:p-7">
+                <h2 className="text-xl font-bold sm:text-2xl">Додати товар до кошика</h2>
                 <p className="mt-3 leading-7 text-gray-400">
                   Додайте {product.brand} {product.article}, оберіть кількість та
                   надішліть замовлення менеджеру.
@@ -167,17 +167,17 @@ export default async function ProductPage({
         </section>
 
         {(related || []).length > 0 && (
-          <section className="border-y border-white/10 bg-[#111827] py-20">
-            <div className="mx-auto max-w-7xl px-6">
-              <h2 className="text-3xl font-bold">Схожі товари</h2>
-              <div className="mt-10 grid gap-7 md:grid-cols-3">
+          <section className="border-y border-white/10 bg-[#111827] py-14 sm:py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6">
+              <h2 className="text-2xl font-bold sm:text-3xl">Схожі товари</h2>
+              <div className="mt-8 grid gap-6 sm:mt-10 md:grid-cols-3 md:gap-7">
                 {(related || []).map((item) => (
                   <Link
                     key={item.id}
                     href={`/product/${item.slug}`}
                     className="overflow-hidden rounded-3xl border border-white/10 bg-[#151D2B] hover:border-blue-500/60"
                   >
-                    <div className="flex h-56 items-center justify-center bg-white">
+                    <div className="flex h-48 items-center justify-center bg-white sm:h-56">
                       {item.image_url && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -187,7 +187,7 @@ export default async function ProductPage({
                         />
                       )}
                     </div>
-                    <div className="p-6">
+                    <div className="p-5 sm:p-6">
                       <span className="text-sm font-bold text-blue-400">
                         {item.brand} · {item.article}
                       </span>
