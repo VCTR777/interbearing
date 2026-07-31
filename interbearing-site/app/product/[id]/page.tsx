@@ -15,6 +15,7 @@ type Product = {
   image_url: string | null;
   specifications: unknown;
   stock_status: string;
+  stock_quantity: number | null;
   price: number | null;
 };
 
@@ -44,7 +45,7 @@ export default async function ProductPage({
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, brand, article, title, description, image_url, specifications, stock_status, price",
+      "id, slug, brand, article, title, description, image_url, specifications, stock_status, stock_quantity, price",
     )
     .eq("slug", id)
     .eq("is_published", true)
@@ -100,6 +101,8 @@ export default async function ProductPage({
                     )}`}
                   >
                     {product.stock_status}
+                    {product.stock_quantity !== null &&
+                      ` · ${product.stock_quantity} шт.`}
                   </span>
               </div>
               <h1 className="mt-6 text-4xl font-bold md:text-5xl">
@@ -147,6 +150,7 @@ export default async function ProductPage({
                       title: product.title,
                       imageUrl: product.image_url,
                       price: product.price,
+                      stockQuantity: product.stock_quantity,
                     }}
                     className="flex-1"
                   />

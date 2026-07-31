@@ -13,6 +13,7 @@ type PopularProduct = {
   description: string;
   image_url: string | null;
   stock_status: string;
+  stock_quantity: number | null;
   price: number | null;
 };
 
@@ -27,7 +28,7 @@ export default async function PopularProducts() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, brand, article, title, description, image_url, stock_status, price, sort_order",
+      "id, slug, brand, article, title, description, image_url, stock_status, stock_quantity, price, sort_order",
     )
     .eq("is_published", true)
     .eq("is_popular", true)
@@ -126,6 +127,8 @@ export default async function PopularProducts() {
                       >
                       <CheckCircle2 aria-hidden="true" size={16} />
                       {product.stock_status}
+                      {product.stock_quantity !== null &&
+                        ` · ${product.stock_quantity} шт.`}
                     </span>
                   </div>
 
@@ -153,6 +156,7 @@ export default async function PopularProducts() {
                         title: product.title,
                         imageUrl: product.image_url,
                         price: product.price,
+                        stockQuantity: product.stock_quantity,
                       }}
                       className="w-full"
                     />

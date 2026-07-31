@@ -169,6 +169,17 @@ export default function CartPageClient() {
                         ? "Ціну уточнюйте"
                         : formatPrice(item.price)}
                     </p>
+                    {item.stockQuantity !== null && (
+                      <p
+                        className={`mt-2 text-sm ${
+                          item.stockQuantity === 0
+                            ? "text-red-400"
+                            : "text-emerald-400"
+                        }`}
+                      >
+                        Доступно: {item.stockQuantity} шт.
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
@@ -194,9 +205,19 @@ export default function CartPageClient() {
                       </span>
                       <button
                         type="button"
+                        disabled={
+                          item.stockQuantity !== null &&
+                          item.quantity >= item.stockQuantity
+                        }
                         onClick={() => setQuantity(item.id, item.quantity + 1)}
-                        className="p-3 hover:text-blue-400"
+                        className="p-3 hover:text-blue-400 disabled:cursor-not-allowed disabled:text-slate-700"
                         aria-label="Збільшити кількість"
+                        title={
+                          item.stockQuantity !== null &&
+                          item.quantity >= item.stockQuantity
+                            ? "Досягнуто доступний залишок"
+                            : undefined
+                        }
                       >
                         <Plus aria-hidden="true" size={17} />
                       </button>

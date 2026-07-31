@@ -13,16 +13,26 @@ export default function AddToCartButton({
 }) {
   const { items, addItem, setQuantity } = useCart();
   const cartItem = items.find((item) => item.id === product.id);
+  const isOutOfStock = product.stockQuantity === 0;
+  const reachedMaximum =
+    product.stockQuantity !== null &&
+    Boolean(cartItem) &&
+    cartItem!.quantity >= product.stockQuantity;
 
   if (!cartItem) {
     return (
       <button
         type="button"
+        disabled={isOutOfStock}
         onClick={() => addItem(product)}
-        className={`inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 py-4 text-center font-semibold transition hover:bg-blue-500 ${className}`}
+        className={`inline-flex items-center justify-center gap-2 rounded-xl px-7 py-4 text-center font-semibold transition ${
+          isOutOfStock
+            ? "cursor-not-allowed bg-slate-700 text-slate-400"
+            : "bg-blue-600 hover:bg-blue-500"
+        } ${className}`}
       >
         <ShoppingCart aria-hidden="true" size={20} />
-        Замовити
+        {isOutOfStock ? "Немає в наявності" : "Замовити"}
       </button>
     );
   }
@@ -50,9 +60,11 @@ export default function AddToCartButton({
 
       <button
         type="button"
+        disabled={reachedMaximum}
         onClick={() => setQuantity(product.id, cartItem.quantity + 1)}
         aria-label="Збільшити кількість"
-        className="flex min-h-14 flex-1 items-center justify-center text-blue-300 transition hover:bg-blue-600 hover:text-white"
+        title={reachedMaximum ? "Досягнуто доступний залишок" : undefined}
+        className="flex min-h-14 flex-1 items-center justify-center text-blue-300 transition hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600 disabled:hover:bg-transparent"
       >
         <Plus aria-hidden="true" size={21} />
       </button>

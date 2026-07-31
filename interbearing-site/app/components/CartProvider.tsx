@@ -17,6 +17,7 @@ export type CartProduct = {
   title: string;
   imageUrl: string | null;
   price: number | null;
+  stockQuantity: number | null;
 };
 
 export type CartItem = CartProduct & {
@@ -41,7 +42,15 @@ function readStoredCart(): CartItem[] {
     if (!stored) return [];
 
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed)
+      ? parsed.map((item) => ({
+          ...item,
+          stockQuantity:
+            typeof item?.stockQuantity === "number"
+              ? item.stockQuantity
+              : null,
+        }))
+      : [];
   } catch {
     return [];
   }
@@ -67,13 +76,20 @@ export default function CartProvider({ children }: { children: ReactNode }) {
       items,
       totalQuantity: items.reduce((total, item) => total + item.quantity, 0),
       addItem(product) {
+        if (product.stockQuantity === 0) return;
+
         setItems((current) => {
           const existing = current.find((item) => item.id === product.id);
+          const maximum = product.stockQuantity ?? 99;
 
           if (existing) {
             return current.map((item) =>
               item.id === product.id
-                ? { ...item, quantity: Math.min(item.quantity + 1, 99) }
+                ? {
+                    ...item,
+                    ...product,
+                    quantity: Math.min(item.quantity + 1, maximum),
+                  }
                 : item,
             );
           }
@@ -90,7 +106,13 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         setItems((current) =>
           current.map((item) =>
             item.id === id
-              ? { ...item, quantity: Math.min(quantity, 99) }
+              ? {
+                  ...item,
+                  quantity: Math.min(
+                    quantity,
+                    item.stockQuantity ?? 99,
+                  ),
+                }
               : item,
           ),
         );

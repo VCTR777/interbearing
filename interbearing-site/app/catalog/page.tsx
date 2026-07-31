@@ -9,7 +9,7 @@ export default async function CatalogPage() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, brand, article, title, description, image_url, stock_status, price, sections, sort_order",
+      "id, slug, brand, article, title, description, image_url, stock_status, stock_quantity, price, sections, sort_order",
     )
     .eq("is_published", true)
     .order("sort_order", { ascending: true })

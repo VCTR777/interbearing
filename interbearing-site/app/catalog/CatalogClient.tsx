@@ -15,6 +15,7 @@ export type CatalogProduct = {
   description: string;
   image_url: string | null;
   stock_status: string;
+  stock_quantity: number | null;
   price: number | null;
   sections: string[] | null;
 };
@@ -392,7 +393,9 @@ export default function CatalogClient({
                             product.stock_status,
                           )}`}
                         >
-                          {product.stock_status}
+                        {product.stock_status}
+                        {product.stock_quantity !== null &&
+                          ` · ${product.stock_quantity} шт.`}
                         </span>
                     </div>
                     <AddToCartButton
@@ -404,6 +407,7 @@ export default function CatalogClient({
                         title: product.title,
                         imageUrl: product.image_url,
                         price: product.price,
+                        stockQuantity: product.stock_quantity,
                       }}
                       className="w-full"
                     />
