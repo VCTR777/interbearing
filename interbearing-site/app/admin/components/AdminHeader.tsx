@@ -2,6 +2,12 @@ import Link from "next/link";
 import LogoutButton from "../LogoutButton";
 
 export default function AdminHeader({ email }: { email?: string }) {
+  const navigation = [
+    { href: "/admin", label: "Товари" },
+    { href: "/admin/orders", label: "Замовлення" },
+    { href: "/admin/stock", label: "Склад" },
+  ];
+
   return (
     <header className="border-b border-white/10 bg-[#0b111d]">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
@@ -15,19 +21,16 @@ export default function AdminHeader({ email }: { email?: string }) {
             </p>
           </Link>
 
-          <nav className="flex items-center gap-2">
-            <Link
-              href="/admin"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-white"
-            >
-              Товари
-            </Link>
-            <Link
-              href="/admin/orders"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-white"
-            >
-              Замовлення
-            </Link>
+          <nav className="flex flex-wrap items-center gap-2">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-blue-500/40 hover:bg-blue-500/10 hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
         </div>
         <LogoutButton />
