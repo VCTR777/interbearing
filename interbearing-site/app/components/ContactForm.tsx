@@ -81,15 +81,15 @@ export default function ContactForm() {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-white/10 bg-white/[0.05] p-7 sm:p-8"
+      className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.05] p-4 sm:rounded-3xl sm:p-8"
     >
-      <h2 className="text-3xl font-bold">Залишити заявку</h2>
+      <h2 className="text-2xl font-bold sm:text-3xl">Залишити заявку</h2>
 
       <p className="mt-3 leading-7 text-gray-400">
         Заповніть форму — заявка надійде менеджеру в Telegram та на email.
       </p>
 
-      <div className="mt-8 space-y-5">
+      <div className="mt-6 space-y-4 sm:mt-8 sm:space-y-5">
         <div>
           <label
             htmlFor="contact-name"
@@ -107,7 +107,7 @@ export default function ContactForm() {
             maxLength={80}
             autoComplete="name"
             placeholder="Віктор"
-            className="w-full rounded-xl border border-white/10 bg-[#111827] p-4 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+            className="min-h-12 w-full rounded-xl border border-white/10 bg-[#111827] p-3.5 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 sm:p-4"
           />
         </div>
 
@@ -129,7 +129,7 @@ export default function ContactForm() {
             autoComplete="tel"
             inputMode="tel"
             placeholder="+38 (___) ___-__-__"
-            className="w-full rounded-xl border border-white/10 bg-[#111827] p-4 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+            className="min-h-12 w-full rounded-xl border border-white/10 bg-[#111827] p-3.5 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 sm:p-4"
           />
         </div>
 
@@ -148,7 +148,7 @@ export default function ContactForm() {
             maxLength={120}
             autoComplete="email"
             placeholder="name@example.com"
-            className="w-full rounded-xl border border-white/10 bg-[#111827] p-4 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+            className="min-h-12 w-full rounded-xl border border-white/10 bg-[#111827] p-3.5 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 sm:p-4"
           />
         </div>
 
@@ -168,7 +168,7 @@ export default function ContactForm() {
             maxLength={1500}
             rows={6}
             placeholder="Вкажіть артикул, розміри або опишіть обладнання"
-            className="w-full resize-y rounded-xl border border-white/10 bg-[#111827] p-4 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+            className="w-full resize-y rounded-xl border border-white/10 bg-[#111827] p-3.5 outline-none transition placeholder:text-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 sm:p-4"
           />
         </div>
 
@@ -189,7 +189,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-4 font-semibold transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-4 py-3.5 font-semibold transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 sm:py-4"
         >
           {isSubmitting ? (
             <>
