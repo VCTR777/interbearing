@@ -81,8 +81,8 @@ export default function CartPageClient() {
 
   if (isSuccess) {
     return (
-      <main className="flex min-h-[75vh] items-center bg-[#0B0F19] px-6 pt-28 text-white">
-        <div className="mx-auto w-full max-w-2xl rounded-3xl border border-emerald-500/25 bg-emerald-500/10 p-10 text-center">
+      <main className="flex min-h-[75vh] items-center bg-[#0B0F19] px-4 pt-28 text-white sm:px-6">
+        <div className="mx-auto w-full max-w-2xl rounded-3xl border border-emerald-500/25 bg-emerald-500/10 p-6 text-center sm:p-10">
           <CheckCircle2 className="mx-auto text-emerald-400" size={52} />
           <h1 className="mt-6 text-3xl font-bold">Замовлення надіслано</h1>
           <p className="mt-4 leading-7 text-gray-300">{message}</p>
@@ -99,7 +99,7 @@ export default function CartPageClient() {
 
   return (
     <main className="min-h-screen bg-[#0B0F19] pb-24 pt-32 text-white">
-      <section className="mx-auto max-w-7xl px-6">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-5">
           <div>
             <span className="text-sm font-bold uppercase tracking-[0.18em] text-blue-400">
@@ -120,9 +120,9 @@ export default function CartPageClient() {
         </div>
 
         {items.length === 0 ? (
-          <div className="mt-12 rounded-3xl border border-dashed border-white/15 bg-[#111827] px-6 py-20 text-center">
+          <div className="mt-10 rounded-3xl border border-dashed border-white/15 bg-[#111827] px-5 py-14 text-center sm:mt-12 sm:px-6 sm:py-20">
             <ShoppingCart className="mx-auto text-blue-400" size={50} />
-            <h2 className="mt-6 text-3xl font-bold">Кошик порожній</h2>
+            <h2 className="mt-6 text-2xl font-bold sm:text-3xl">Кошик порожній</h2>
             <p className="mt-3 text-gray-400">
               Додайте потрібні підшипники з каталогу.
             </p>
@@ -134,12 +134,12 @@ export default function CartPageClient() {
             </Link>
           </div>
         ) : (
-          <div className="mt-12 grid items-start gap-8 lg:grid-cols-[1.35fr_0.85fr]">
+          <div className="mt-10 grid items-start gap-8 sm:mt-12 lg:grid-cols-[1.35fr_0.85fr]">
             <div className="space-y-4">
               {items.map((item) => (
                 <article
                   key={item.id}
-                  className="grid gap-5 rounded-3xl border border-white/10 bg-[#111827] p-5 sm:grid-cols-[120px_1fr_auto]"
+                  className="grid gap-5 rounded-3xl border border-white/10 bg-[#111827] p-4 sm:grid-cols-[120px_1fr_auto] sm:p-5"
                 >
                   <div className="flex h-28 items-center justify-center overflow-hidden rounded-2xl bg-white">
                     {item.imageUrl ? (
@@ -160,7 +160,7 @@ export default function CartPageClient() {
                     </p>
                     <Link
                       href={`/product/${item.slug}`}
-                      className="mt-2 block text-xl font-bold hover:text-blue-400"
+                      className="mt-2 block break-words text-lg font-bold hover:text-blue-400 sm:text-xl"
                     >
                       {item.title}
                     </Link>
@@ -182,7 +182,7 @@ export default function CartPageClient() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end">
+                  <div className="flex flex-wrap items-center justify-between gap-4 sm:flex-col sm:items-end">
                     <button
                       type="button"
                       onClick={() => removeItem(item.id)}
@@ -229,12 +229,12 @@ export default function CartPageClient() {
 
             <form
               onSubmit={handleSubmit}
-              className="sticky top-28 rounded-3xl border border-white/10 bg-[#111827] p-7"
+              className="rounded-3xl border border-white/10 bg-[#111827] p-5 sm:p-7 lg:sticky lg:top-28"
             >
               <h2 className="text-2xl font-bold">Оформити замовлення</h2>
               <div className="mt-5 flex items-center justify-between border-b border-white/10 pb-5">
                 <span className="text-gray-400">Сума</span>
-                <strong className="text-2xl">
+                <strong className="text-xl sm:text-2xl">
                   {knownTotal > 0 ? formatPrice(knownTotal) : "Уточнюється"}
                 </strong>
               </div>

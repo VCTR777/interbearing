@@ -51,7 +51,7 @@ export default function Hero() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-[#0B0F19] pb-20 pt-32 text-white md:pb-28 md:pt-40">
+      <section className="relative isolate overflow-hidden bg-[#0B0F19] pb-16 pt-28 text-white sm:pb-20 sm:pt-32 md:pb-28 md:pt-40">
         {/* Фонове оформлення */}
         <div
           aria-hidden="true"
@@ -65,25 +65,25 @@ export default function Hero() {
 
         <div
           aria-hidden="true"
-          className="hero-background-glow absolute right-[-180px] top-20 -z-10 h-[620px] w-[620px] rounded-full bg-blue-600/20 blur-[150px]"
+          className="hero-background-glow absolute right-[-180px] top-20 -z-10 h-[420px] w-[420px] rounded-full bg-blue-600/20 blur-[110px] sm:h-[620px] sm:w-[620px] sm:blur-[150px]"
         />
 
-        <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 lg:grid-cols-[1.08fr_0.92fr]">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
           {/* Ліва частина */}
           <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-300 backdrop-blur">
+            <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 backdrop-blur sm:px-4 sm:text-sm">
               <span className="hero-status-dot h-2 w-2 rounded-full bg-blue-400" />
               Надійний постачальник підшипників
             </span>
 
-            <h1 className="mt-7 text-5xl font-black leading-[0.96] tracking-[-0.04em] sm:text-6xl md:text-7xl">
+            <h1 className="mt-7 text-[clamp(2.5rem,12.5vw,4.5rem)] font-black leading-[0.96] tracking-[-0.045em]">
               INTER
               <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                 BEARING
               </span>
             </h1>
 
-            <p className="mt-6 text-2xl font-medium text-gray-200 md:text-3xl">
+            <p className="mt-5 text-xl font-medium text-gray-200 sm:mt-6 sm:text-2xl md:text-3xl">
               Надійність у кожному оберті
             </p>
 
@@ -96,7 +96,7 @@ export default function Hero() {
             {/* Пошук за артикулом */}
             <form
               onSubmit={handleSearch}
-              className="mt-9 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.06] p-2 shadow-2xl shadow-black/30 backdrop-blur-xl"
+              className="mt-7 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.06] p-2 shadow-2xl shadow-black/30 backdrop-blur-xl sm:mt-9"
             >
               <label htmlFor="hero-article-search" className="sr-only">
                 Пошук за артикулом
@@ -162,7 +162,7 @@ export default function Hero() {
           </div>
 
           {/* Кругла анімована 3D-зона */}
-          <div className="hero-bearing-scene relative mx-auto w-full max-w-[560px]">
+          <div className="hero-bearing-scene relative mx-auto w-full max-w-[440px] sm:max-w-[560px]">
             <div
               aria-hidden="true"
               className="hero-bearing-glow absolute inset-[7%] rounded-full bg-blue-500/30 blur-[90px]"
@@ -213,7 +213,7 @@ export default function Hero() {
         </div>
 
         {/* Статистика */}
-        <div className="mx-auto mt-16 max-w-7xl px-6">
+        <div className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6">
           <div className="grid overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl sm:grid-cols-3">
             {statistics.map((item, index) => (
               <div
