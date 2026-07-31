@@ -1,8 +1,13 @@
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
 
 import ContactForm from "../components/ContactForm";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+
+const companyAddress = "49034, м. Дніпро, вул. Любарського, 143, оф. 207";
+const encodedAddress = encodeURIComponent(companyAddress);
+const mapEmbedUrl = `https://www.google.com/maps?q=${encodedAddress}&output=embed`;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
 
 const contactItems = [
   {
@@ -19,8 +24,8 @@ const contactItems = [
   },
   {
     title: "Адреса",
-    value: "49034, м. Дніпро, вул. Любарського, 143, оф. 207",
-    href: null,
+    value: companyAddress,
+    href: directionsUrl,
     icon: MapPin,
   },
   {
@@ -104,6 +109,43 @@ export default function ContactsPage() {
 
             <ContactForm />
           </div>
+
+          <section className="mt-16 overflow-hidden rounded-3xl border border-white/10 bg-[#111827]">
+            <div className="flex flex-col gap-5 border-b border-white/10 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
+                    <MapPin aria-hidden="true" size={23} />
+                  </div>
+                  <h2 className="text-2xl font-bold">Ми на карті</h2>
+                </div>
+                <p className="mt-4 leading-7 text-gray-400">
+                  {companyAddress}
+                </p>
+              </div>
+
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 font-semibold text-white transition hover:bg-blue-500"
+              >
+                <Navigation aria-hidden="true" size={19} />
+                Прокласти маршрут
+              </a>
+            </div>
+
+            <div className="relative h-[360px] bg-[#0b1220] sm:h-[460px]">
+              <iframe
+                title="INTERBEARING на Google Maps"
+                src={mapEmbedUrl}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0 h-full w-full border-0"
+              />
+            </div>
+          </section>
         </section>
       </main>
 
