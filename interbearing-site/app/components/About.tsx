@@ -104,7 +104,7 @@ export default function About() {
             </p>
           </article>
 
-          <article className="rounded-3xl border border-blue-500/20 bg-blue-500/5 p-8 sm:p-10">
+          <article className="rounded-3xl border border-white/10 bg-[#151D2B] p-8 sm:p-10">
             <Handshake className="text-blue-400" size={42} />
             <h2 className="mt-6 text-3xl font-bold">Наше бачення</h2>
             <p className="mt-4 leading-8 text-slate-400">
