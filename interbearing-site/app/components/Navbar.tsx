@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import CartLink from "./CartLink";
+import ThemeToggle from "./ThemeToggle";
 
 const navigation = [
   { label: "Головна", href: "/" },
@@ -71,6 +72,7 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <CartLink />
           <Link
             href="/contacts"

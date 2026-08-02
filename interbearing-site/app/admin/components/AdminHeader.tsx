@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LogoutButton from "../LogoutButton";
+import ThemeToggle from "../../components/ThemeToggle";
 
 export default function AdminHeader({ email }: { email?: string }) {
   const navigation = [
@@ -33,7 +34,12 @@ export default function AdminHeader({ email }: { email?: string }) {
             ))}
           </nav>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <div className="min-w-0 flex-1 sm:flex-none">
+            <LogoutButton />
+          </div>
+        </div>
       </div>
     </header>
   );
