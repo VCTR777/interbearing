@@ -50,9 +50,11 @@ function validatePayload(payload: ContactPayload):
     return { ok: false, message: "Не вдалося надіслати заявку." };
   }
 
+  const receivedAt = Date.now();
   if (
     Number.isFinite(startedAt) &&
-    Date.now() - startedAt < 2500
+    startedAt <= receivedAt &&
+    receivedAt - startedAt < 2500
   ) {
     return {
       ok: false,

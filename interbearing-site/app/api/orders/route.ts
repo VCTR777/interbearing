@@ -217,7 +217,12 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    if (Number.isFinite(startedAt) && Date.now() - startedAt < 2500) {
+    const receivedAt = Date.now();
+    if (
+      Number.isFinite(startedAt) &&
+      startedAt <= receivedAt &&
+      receivedAt - startedAt < 2500
+    ) {
       return NextResponse.json(
         { message: "Перевірте дані та спробуйте ще раз." },
         { status: 400 },
