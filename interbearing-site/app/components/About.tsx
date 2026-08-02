@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AboutLogoCard from "./AboutLogoCard";
 import {
   Award,
   Boxes,
@@ -88,22 +89,7 @@ export default function About() {
             </Link>
           </div>
 
-          <div className="relative min-h-[360px] overflow-hidden rounded-3xl border border-white/10 bg-[#151D2B] p-8 sm:min-h-[440px]">
-            <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-600/20 blur-3xl" />
-            <div className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
-
-            <div className="relative flex h-full min-h-[290px] items-center justify-center rounded-2xl border border-white/10 bg-[#0B0F19]/70">
-              <div className="relative flex h-52 w-52 items-center justify-center rounded-full border-[22px] border-slate-300 shadow-[0_0_70px_rgba(37,99,235,0.35)] sm:h-64 sm:w-64 sm:border-[28px]">
-                <div className="h-20 w-20 rounded-full border-[14px] border-blue-500 sm:h-24 sm:w-24" />
-                <div className="absolute inset-3 rounded-full border border-dashed border-blue-400/50" />
-              </div>
-            </div>
-
-            <div className="absolute bottom-7 left-7 rounded-xl border border-white/10 bg-[#101725]/90 px-5 py-4 backdrop-blur">
-              <p className="text-sm text-slate-400">INTERBEARING</p>
-              <p className="mt-1 font-semibold">Надійність у кожному оберті</p>
-            </div>
-          </div>
+          <AboutLogoCard />
         </div>
 
         {/* Mission and vision */}

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import CartLink from "./CartLink";
 import ThemeToggle from "./ThemeToggle";
+import BrandLogo from "./BrandLogo";
 
 const navigation = [
   { label: "Головна", href: "/" },
@@ -37,9 +38,9 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label="INTERBEARING — головна сторінка"
-          className="text-xl font-extrabold tracking-wide transition hover:opacity-90 sm:text-2xl lg:text-3xl"
+          className="inline-flex shrink-0 items-center transition hover:opacity-90"
         >
-          INTER<span className="text-blue-500">BEARING</span>
+          <BrandLogo />
         </Link>
 
         <nav

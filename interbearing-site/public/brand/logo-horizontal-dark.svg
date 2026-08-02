@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 280" role="img" aria-labelledby="t d">
+  <title id="t">INTERBEARING</title><desc id="d">Логотип InterBearing для темного фону</desc>
+  <defs><linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#60A5FA"/><stop offset=".55" stop-color="#2563EB"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
+  <g transform="translate(18 15) scale(.88)">
+    <path d="M205 53A101 101 0 1 0 205 203" fill="none" stroke="url(#ring)" stroke-width="28" stroke-linecap="round"/>
+    <path d="M181 77A67 67 0 1 0 181 179" fill="none" stroke="#94A3B8" stroke-width="18" stroke-linecap="round"/>
+    <path d="M112 39h27v178h-27z" fill="#3B82F6"/>
+    <path d="M151 60h31c45 0 67 18 67 51 0 21-10 36-30 44 24 7 36 24 36 48 0 36-27 54-76 54h-28zm27 28v51h10c23 0 35-9 35-26 0-16-11-25-34-25zm0 79v53h13c25 0 38-9 38-27 0-17-13-26-39-26z" fill="#F8FAFC" transform="translate(-16 -9) scale(.91)"/>
+  </g>
+  <g font-family="Arial,Helvetica,sans-serif">
+    <text x="285" y="134" font-size="77" font-weight="900" letter-spacing="2" fill="#F8FAFC">INTER</text>
+    <text x="520" y="134" font-size="77" font-weight="900" letter-spacing="2" fill="#3B82F6">BEARING</text>
+    <text x="290" y="190" font-size="22" font-weight="700" letter-spacing="7" fill="#94A3B8">НАДІЙНІСТЬ У КОЖНОМУ ОБЕРТІ</text>
+  </g>
+</svg>
