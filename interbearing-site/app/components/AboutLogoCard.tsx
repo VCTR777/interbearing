@@ -6,7 +6,7 @@ export default function AboutLogoCard() {
       <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-600/20 blur-3xl" />
       <div className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
 
-      <div className="relative flex min-h-[310px] flex-col items-center justify-center gap-7 rounded-2xl border border-white/10 bg-[#0B0F19]/70 px-5 py-8 sm:min-h-[374px]">
+      <div className="relative flex min-h-[310px] flex-col items-center justify-center gap-6 rounded-2xl border border-white/10 bg-[#0B0F19]/70 px-5 py-8 sm:min-h-[374px]">
         <div className="relative h-44 w-44 sm:h-56 sm:w-56">
           <div className="absolute inset-5 rounded-full bg-blue-500/20 blur-3xl" />
           <Image
@@ -18,13 +18,22 @@ export default function AboutLogoCard() {
           />
         </div>
 
-        <Image
-          src="/brand/logo-horizontal-dark.svg"
-          alt="InterBearing — Надійність у кожному оберті"
-          width={1120}
-          height={280}
-          className="h-auto w-full max-w-[430px]"
-        />
+        <div className="relative h-[86px] w-full max-w-[440px] sm:h-[105px]">
+          <Image
+            src="/brand/logo-horizontal-dark.svg"
+            alt="InterBearing — Надійність у кожному оберті"
+            fill
+            sizes="(max-width: 640px) 90vw, 440px"
+            className="theme-logo-dark object-contain"
+          />
+          <Image
+            src="/brand/logo-horizontal-light.svg"
+            alt="InterBearing — Надійність у кожному оберті"
+            fill
+            sizes="(max-width: 640px) 90vw, 440px"
+            className="theme-logo-light object-contain"
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/* Автоматично перемикає версію логотипа разом із темою сайту. */
+.theme-logo-dark {
+  display: block;
+}
+
+.theme-logo-light {
+  display: none;
+}
+
+html[data-theme="light"] .theme-logo-dark {
+  display: none;
+}
+
+html[data-theme="light"] .theme-logo-light {
+  display: block;
+}
+
 :root {
   --background: #0b0f19;
   --foreground: #f8fafc;
