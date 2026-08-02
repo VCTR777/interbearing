@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import BrandLogo from "../../components/BrandLogo";
 
 import LoginForm from "./LoginForm";
 
@@ -22,9 +23,10 @@ export default async function AdminLoginPage() {
       <section className="relative w-full max-w-md rounded-3xl border border-white/10 bg-[#111827]/95 p-7 shadow-2xl shadow-black/30 backdrop-blur sm:p-9">
         <Link
           href="/"
-          className="text-xl font-extrabold tracking-wide transition hover:opacity-80"
+          aria-label="InterBearing — повернутися на сайт"
+          className="inline-flex transition hover:opacity-80"
         >
-          INTER<span className="text-blue-500">BEARING</span>
+          <BrandLogo />
         </Link>
 
         <p className="mt-8 text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">

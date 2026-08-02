@@ -1,6 +1,7 @@
 import Link from "next/link";
 import LogoutButton from "../LogoutButton";
 import ThemeToggle from "../../components/ThemeToggle";
+import BrandLogo from "../../components/BrandLogo";
 
 export default function AdminHeader({ email }: { email?: string }) {
   const navigation = [
@@ -14,9 +15,7 @@ export default function AdminHeader({ email }: { email?: string }) {
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 sm:py-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
           <Link href="/admin" className="transition hover:opacity-85">
-            <p className="text-xl font-extrabold tracking-wide text-white">
-              INTER<span className="text-blue-500">BEARING</span>
-            </p>
+            <BrandLogo />
             <p className="mt-1 break-words text-sm text-slate-500">
               Панель адміністратора{email ? ` · ${email}` : ""}
             </p>
