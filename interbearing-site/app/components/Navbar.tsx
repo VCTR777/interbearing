@@ -21,10 +21,6 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
 
     return () => {
@@ -117,6 +113,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
                   className={`flex items-center justify-between rounded-2xl px-5 py-4 text-lg font-semibold transition ${
                     isActive
                       ? "bg-blue-500/15 text-blue-300"
@@ -130,6 +127,7 @@ export default function Navbar() {
             })}
             <Link
               href="/cart"
+              onClick={() => setIsMenuOpen(false)}
               className="flex items-center justify-between rounded-2xl px-5 py-4 text-lg font-semibold text-gray-200 hover:bg-white/[0.05]"
             >
               Кошик
@@ -139,6 +137,7 @@ export default function Navbar() {
           <div className="mt-auto border-t border-white/10 pt-6">
             <Link
               href="/contacts"
+              onClick={() => setIsMenuOpen(false)}
               className="flex w-full items-center justify-center rounded-xl bg-blue-600 px-6 py-4 text-base font-semibold transition hover:bg-blue-500"
             >
               Залишити заявку

@@ -214,10 +214,10 @@ export async function POST(request: Request) {
       sendEmail(validation.data, requestId),
     ]);
 
-    if (
-      telegramResult.status === "rejected" ||
-      emailResult.status === "rejected"
-    ) {
+    const telegramFailed = telegramResult.status === "rejected";
+    const emailFailed = emailResult.status === "rejected";
+
+    if (telegramFailed || emailFailed) {
       console.error("Contact delivery failed", {
         requestId,
         telegram:
@@ -230,6 +230,9 @@ export async function POST(request: Request) {
             : "delivered",
       });
 
+    }
+
+    if (telegramFailed && emailFailed) {
       return NextResponse.json(
         {
           message:
@@ -242,7 +245,9 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       message:
-        "Дякуємо! Заявку надіслано. Наш менеджер зв’яжеться з вами найближчим часом.",
+        telegramFailed || emailFailed
+          ? "Дякуємо! Заявку прийнято. Наш менеджер зв’яжеться з вами найближчим часом."
+          : "Дякуємо! Заявку надіслано. Наш менеджер зв’яжеться з вами найближчим часом.",
     });
   } catch (error) {
     console.error("Contact request failed", error);

@@ -61,8 +61,12 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    setItems(readStoredCart());
-    setIsReady(true);
+    const frame = window.requestAnimationFrame(() => {
+      setItems(readStoredCart());
+      setIsReady(true);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {

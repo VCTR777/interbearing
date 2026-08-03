@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import CartPageClient from "./CartPageClient";
 
 export const metadata = {
-  title: "Кошик | INTERBEARING",
+  title: "Кошик",
   description: "Оформлення замовлення підшипників INTERBEARING.",
 };
 

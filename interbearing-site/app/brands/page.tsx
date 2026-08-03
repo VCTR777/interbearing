@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -63,9 +64,11 @@ export default function BrandsPage() {
 
             {brands.map((brand) => (
 
-              <div
+              <Link
                 key={brand.name}
-                className="rounded-3xl border border-white/10 bg-[#151D2B] p-8 transition duration-300 hover:-translate-y-2 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/20"
+                href={`/catalog?brand=${encodeURIComponent(brand.name)}`}
+                aria-label={`Переглянути товари бренду ${brand.name}`}
+                className="group rounded-3xl border border-white/10 bg-[#151D2B] p-8 transition duration-300 hover:-translate-y-2 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/20"
               >
 
                 <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-blue-600 text-3xl font-black">
@@ -92,11 +95,11 @@ export default function BrandsPage() {
 
                 </div>
 
-                <button className="mt-10 w-full rounded-xl bg-blue-600 py-4 font-semibold transition hover:bg-blue-700">
+                <span className="mt-10 block w-full rounded-xl bg-blue-600 py-4 text-center font-semibold transition group-hover:bg-blue-700">
                   Переглянути товари
-                </button>
+                </span>
 
-              </div>
+              </Link>
 
             ))}
 

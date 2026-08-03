@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#0B0F19]">
@@ -22,9 +24,9 @@ export default function Footer() {
             </h3>
 
             <ul className="mt-4 space-y-3 text-gray-400">
-              <li><a href="/">Головна</a></li>
-              <li><a href="/catalog">Каталог</a></li>
-              <li><a href="/contacts">Контакти</a></li>
+              <li><Link href="/">Головна</Link></li>
+              <li><Link href="/catalog">Каталог</Link></li>
+              <li><Link href="/contacts">Контакти</Link></li>
             </ul>
           </div>
 

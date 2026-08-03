@@ -46,11 +46,15 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    const initialPreference = isThemePreference(stored) ? stored : "system";
-    setStoredPreference(initialPreference);
-    setResolvedTheme(applyTheme(initialPreference));
-    setIsReady(true);
+    const frame = window.requestAnimationFrame(() => {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      const initialPreference = isThemePreference(stored) ? stored : "system";
+      setStoredPreference(initialPreference);
+      setResolvedTheme(applyTheme(initialPreference));
+      setIsReady(true);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {

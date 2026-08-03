@@ -3,7 +3,6 @@ import AboutLogoCard from "./AboutLogoCard";
 import {
   Award,
   Boxes,
-  CheckCircle2,
   Factory,
   Handshake,
   Headset,
@@ -195,12 +194,14 @@ export default function About() {
 
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {brands.map((brand) => (
-              <div
+              <Link
                 key={brand}
+                href={`/catalog?brand=${encodeURIComponent(brand)}`}
+                aria-label={`Переглянути товари бренду ${brand}`}
                 className="flex min-h-24 items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 text-center text-xl font-bold tracking-wider text-slate-200 transition hover:border-blue-500 hover:text-blue-400"
               >
                 {brand}
-              </div>
+              </Link>
             ))}
           </div>
         </div>
