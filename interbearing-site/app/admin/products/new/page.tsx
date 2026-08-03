@@ -5,7 +5,14 @@ import AdminHeader from "../../components/AdminHeader";
 import ProductForm from "../../components/ProductForm";
 
 export default async function NewProductPage() {
-  const { user } = await requireAdmin();
+  const { supabase, user } = await requireAdmin();
+  const { data: brandRows } = await supabase
+    .from("brands")
+    .select("name")
+    .eq("is_published", true)
+    .order("sort_order")
+    .order("name");
+  const brands = (brandRows || []).map((item) => item.name);
 
   return (
     <main className="min-h-screen bg-[#080c14] pb-16 text-white">
@@ -22,7 +29,7 @@ export default async function NewProductPage() {
         <p className="mt-3 text-slate-400">
           Заповніть інформацію, додайте фотографію та опублікуйте товар.
         </p>
-        <ProductForm />
+        <ProductForm brands={brands} />
       </section>
     </main>
   );

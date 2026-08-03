@@ -20,6 +20,14 @@ export default async function EditProductPage({
     .eq("id", id)
     .single();
 
+  const { data: brandRows } = await supabase
+    .from("brands")
+    .select("name")
+    .eq("is_published", true)
+    .order("sort_order")
+    .order("name");
+  const brands = (brandRows || []).map((item) => item.name);
+
   if (error || !product) notFound();
 
   return (
@@ -37,7 +45,7 @@ export default async function EditProductPage({
         <p className="mt-3 text-slate-400">
           Змініть інформацію або завантажте нову фотографію.
         </p>
-        <ProductForm product={product as ProductFormValue} />
+        <ProductForm product={product as ProductFormValue} brands={brands} />
       </section>
     </main>
   );

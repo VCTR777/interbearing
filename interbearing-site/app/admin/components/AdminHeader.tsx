@@ -6,6 +6,7 @@ import BrandLogo from "../../components/BrandLogo";
 export default function AdminHeader({ email }: { email?: string }) {
   const navigation = [
     { href: "/admin", label: "Товари" },
+    { href: "/admin/brands", label: "Бренди" },
     { href: "/admin/orders", label: "Замовлення" },
     { href: "/admin/stock", label: "Склад" },
   ];

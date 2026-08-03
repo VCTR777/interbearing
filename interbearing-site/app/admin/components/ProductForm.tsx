@@ -49,8 +49,10 @@ function createSlug(value: string) {
 
 export default function ProductForm({
   product,
+  brands = [],
 }: {
   product?: ProductFormValue;
+  brands?: string[];
 }) {
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -259,13 +261,20 @@ export default function ProductForm({
         <div className="mt-5 grid gap-4 md:mt-6 md:grid-cols-2 md:gap-5">
           <label className="text-sm font-medium text-slate-300">
             Бренд *
-            <input
+            <select
               name="brand"
               required
               defaultValue={product?.brand}
-              placeholder="SKF"
               className={input}
-            />
+            >
+              <option value="" disabled>Оберіть бренд</option>
+              {product?.brand && !brands.includes(product.brand) && (
+                <option value={product.brand}>{product.brand}</option>
+              )}
+              {brands.map((brandName) => (
+                <option key={brandName} value={brandName}>{brandName}</option>
+              ))}
+            </select>
           </label>
           <label className="text-sm font-medium text-slate-300">
             Артикул *

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getPublishedBrands } from "@/lib/brands";
 import AboutLogoCard from "./AboutLogoCard";
 import {
   Award,
@@ -50,9 +51,11 @@ const advantages = [
   },
 ];
 
-const brands = ["SKF", "FAG", "INA", "NSK", "NTN", "KOYO", "TIMKEN", "SNR"];
+const fallbackBrands = ["SKF", "FAG", "INA", "NSK", "NTN", "KOYO", "TIMKEN", "SNR"];
 
-export default function About() {
+export default async function About() {
+  const brandRows = await getPublishedBrands();
+  const brands = brandRows.length ? brandRows.map((brand) => brand.name) : fallbackBrands;
   return (
     <section id="about" className="overflow-hidden bg-[#0B0F19] py-24 text-white">
       <div className="mx-auto max-w-7xl px-6">
