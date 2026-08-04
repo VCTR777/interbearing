@@ -14,18 +14,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin", "cyrillic"],
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://interbearing-onb8.vercel.app";
+const siteUrl = "https://www.interbearing.com.ua";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+
   title: {
     default: "INTERBEARING — підшипники та комплектуючі",
     template: "%s | INTERBEARING",
   },
+
   description:
-    "Підшипники світових брендів для промисловості, автомобільної та аграрної техніки. Підбір, консультація і доставка по Україні.",
+    "Підшипники світових брендів для промисловості, автомобільної та аграрної техніки. Професійний підбір і доставка по Україні.",
+
   applicationName: "INTERBEARING",
+
   keywords: [
     "підшипники",
     "купити підшипник",
@@ -39,10 +42,26 @@ export const metadata: Metadata = {
     "KOYO",
     "NTN",
   ],
-  authors: [{ name: "INTERBEARING" }],
+
+  authors: [{ name: "INTERBEARING", url: siteUrl }],
   creator: "INTERBEARING",
   publisher: "INTERBEARING",
-  alternates: { canonical: "/" },
+
+  alternates: {
+    canonical: "/",
+  },
+
+  icons: {
+    icon: [
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/icon.svg",
+  },
+
   openGraph: {
     type: "website",
     locale: "uk_UA",
@@ -51,13 +70,24 @@ export const metadata: Metadata = {
     title: "INTERBEARING — підшипники та комплектуючі",
     description:
       "Підбір і постачання підшипників світових брендів з доставкою по Україні.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "INTERBEARING — надійність у кожному оберті",
+      },
+    ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: "INTERBEARING — підшипники та комплектуючі",
     description:
       "Підбір і постачання підшипників світових брендів з доставкою по Україні.",
+    images: ["/opengraph-image"],
   },
+
   robots: {
     index: true,
     follow: true,
@@ -69,7 +99,47 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+
   manifest: "/manifest.webmanifest",
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${siteUrl}/#organization`,
+  name: "INTERBEARING",
+  alternateName: "Інтерберінг",
+  url: siteUrl,
+  logo: {
+    "@type": "ImageObject",
+    url: `${siteUrl}/icon.svg`,
+    width: 256,
+    height: 256,
+  },
+  image: `${siteUrl}/opengraph-image`,
+  description:
+    "Постачання підшипників і комплектуючих для промисловості, автомобільної та аграрної техніки.",
+  email: "interbearing1@gmail.com",
+  telephone: "+380958227953",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "вул. Любарського, 143, оф. 207",
+    addressLocality: "Дніпро",
+    postalCode: "49034",
+    addressCountry: "UA",
+  },
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  name: "INTERBEARING",
+  url: siteUrl,
+  inLanguage: "uk-UA",
+  publisher: {
+    "@id": `${siteUrl}/#organization`,
+  },
 };
 
 const themeScript = `
@@ -79,9 +149,14 @@ const themeScript = `
       const preference = ["system", "light", "dark"].includes(stored)
         ? stored
         : "system";
-      const resolved = preference === "system"
-        ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-        : preference;
+
+      const resolved =
+        preference === "system"
+          ? matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
+          : preference;
+
       document.documentElement.dataset.theme = resolved;
       document.documentElement.style.colorScheme = resolved;
     } catch {
@@ -90,7 +165,11 @@ const themeScript = `
   })();
 `;
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="uk"
@@ -99,7 +178,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
       </head>
+
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
           <CartProvider>{children}</CartProvider>

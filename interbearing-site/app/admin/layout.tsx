@@ -2,9 +2,17 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Панель керування",
-  robots: { index: false, follow: false, noarchive: true },
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+  },
 };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }
