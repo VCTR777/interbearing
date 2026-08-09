@@ -27,6 +27,7 @@ export default function Footer() {
               <li><Link href="/">Головна</Link></li>
               <li><Link href="/catalog">Каталог</Link></li>
               <li><Link href="/contacts">Контакти</Link></li>
+              <li><Link href="/privacy">Політика конфіденційності</Link></li>
             </ul>
           </div>
 
@@ -45,7 +46,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-gray-500">
-          © {new Date().getFullYear()} INTERBEARING. Усі права захищені.
+          <p>© {new Date().getFullYear()} INTERBEARING. Усі права захищені.</p>
+          <Link className="mt-2 inline-block hover:text-blue-400" href="/privacy">Політика конфіденційності</Link>
         </div>
 
       </div>

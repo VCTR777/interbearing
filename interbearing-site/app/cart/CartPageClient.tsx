@@ -286,6 +286,10 @@ export default function CartPageClient() {
                 >
                   <input name="website" tabIndex={-1} autoComplete="off" />
                 </div>
+                <label className="flex items-start gap-3 text-sm leading-6 text-gray-400">
+                  <input name="privacyConsent" type="checkbox" required className="mt-1 h-4 w-4 shrink-0 accent-blue-600" />
+                  <span>Я погоджуюся на обробку персональних даних відповідно до <Link href="/privacy" target="_blank" className="font-medium text-blue-400 hover:text-blue-300">Політики конфіденційності</Link>.</span>
+                </label>
                 <button
                   type="submit"
                   disabled={isSubmitting}
