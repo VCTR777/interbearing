@@ -16,6 +16,7 @@ type OrderPayload = {
   items?: unknown;
   website?: unknown;
   startedAt?: unknown;
+  privacyConsent?: unknown;
 };
 
 type OrderItemSnapshot = {
@@ -214,6 +215,12 @@ export async function POST(request: Request) {
     if (website) {
       return NextResponse.json(
         { message: "Не вдалося надіслати замовлення." },
+        { status: 400 },
+      );
+    }
+    if (payload.privacyConsent !== true) {
+      return NextResponse.json(
+        { message: "Підтвердьте згоду з Політикою конфіденційності." },
         { status: 400 },
       );
     }

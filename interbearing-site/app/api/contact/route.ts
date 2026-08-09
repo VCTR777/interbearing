@@ -8,6 +8,7 @@ type ContactPayload = {
   email?: unknown;
   message?: unknown;
   website?: unknown;
+  privacyConsent?: unknown;
 };
 
 type ContactData = {
@@ -45,6 +46,13 @@ function validatePayload(payload: ContactPayload):
 
   if (website) {
     return { ok: false, message: "Не вдалося надіслати заявку." };
+  }
+
+  if (payload.privacyConsent !== true) {
+    return {
+      ok: false,
+      message: "Підтвердьте згоду з Політикою конфіденційності.",
+    };
   }
 
   if (name.length < 2) {

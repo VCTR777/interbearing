@@ -53,6 +53,7 @@ export default function CartPageClient() {
             quantity: item.quantity,
           })),
           website: formData.get("website"),
+          privacyConsent: formData.get("privacyConsent") === "on",
           startedAt: Date.now() - 5000,
         }),
       });
