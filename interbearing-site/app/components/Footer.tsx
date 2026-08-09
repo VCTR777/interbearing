@@ -27,6 +27,9 @@ export default function Footer() {
               <li><Link href="/">Головна</Link></li>
               <li><Link href="/catalog">Каталог</Link></li>
               <li><Link href="/contacts">Контакти</Link></li>
+              <li><Link href="/delivery-payment">Доставка та оплата</Link></li>
+              <li><Link href="/returns">Повернення та обмін</Link></li>
+              <li><Link href="/terms">Умови використання</Link></li>
               <li><Link href="/privacy">Політика конфіденційності</Link></li>
             </ul>
           </div>
@@ -48,6 +51,8 @@ export default function Footer() {
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-gray-500">
           <p>© {new Date().getFullYear()} INTERBEARING. Усі права захищені.</p>
           <Link className="mt-2 inline-block hover:text-blue-400" href="/privacy">Політика конфіденційності</Link>
+          <span className="mx-2 text-gray-700">•</span>
+          <Link className="mt-2 inline-block hover:text-blue-400" href="/terms">Умови використання</Link>
         </div>
 
       </div>
