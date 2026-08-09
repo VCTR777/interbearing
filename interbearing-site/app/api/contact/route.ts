@@ -8,7 +8,6 @@ type ContactPayload = {
   email?: unknown;
   message?: unknown;
   website?: unknown;
-  startedAt?: unknown;
 };
 
 type ContactData = {
@@ -43,23 +42,9 @@ function validatePayload(payload: ContactPayload):
   const email = cleanText(payload.email, 120);
   const message = cleanText(payload.message, 1500);
   const website = cleanText(payload.website, 200);
-  const startedAt =
-    typeof payload.startedAt === "number" ? payload.startedAt : Number.NaN;
 
   if (website) {
     return { ok: false, message: "Не вдалося надіслати заявку." };
-  }
-
-  const receivedAt = Date.now();
-  if (
-    Number.isFinite(startedAt) &&
-    startedAt <= receivedAt &&
-    receivedAt - startedAt < 2500
-  ) {
-    return {
-      ok: false,
-      message: "Будь ласка, перевірте дані та спробуйте ще раз.",
-    };
   }
 
   if (name.length < 2) {

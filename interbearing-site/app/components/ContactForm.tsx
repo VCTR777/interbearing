@@ -15,7 +15,6 @@ export default function ContactForm() {
     type: "idle",
     message: "",
   });
-  const [startedAt, setStartedAt] = useState(() => Date.now());
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,7 +41,6 @@ export default function ContactForm() {
           email: formData.get("email"),
           message: formData.get("message"),
           website: formData.get("website"),
-          startedAt,
         }),
       });
 
@@ -63,7 +61,6 @@ export default function ContactForm() {
           "Дякуємо! Заявку успішно надіслано.",
       });
       formRef.current?.reset();
-      setStartedAt(Date.now());
     } catch (error) {
       setStatus({
         type: "error",
