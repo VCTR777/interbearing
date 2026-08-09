@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -182,6 +183,21 @@ async function sendEmail(data: ContactData, requestId: string) {
 
 export async function POST(request: Request) {
   try {
+    const rateLimit = await checkRateLimit(request, "contact", 5, 600);
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          message:
+            "Забагато спроб. Зачекайте кілька хвилин і спробуйте ще раз.",
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfter) },
+        },
+      );
+    }
+
     const contentType = request.headers.get("content-type") || "";
 
     if (!contentType.includes("application/json")) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -196,6 +197,21 @@ async function sendEmail(
 
 export async function POST(request: Request) {
   try {
+    const rateLimit = await checkRateLimit(request, "orders", 5, 900);
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          message:
+            "Забагато спроб оформлення. Зачекайте кілька хвилин і спробуйте ще раз.",
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfter) },
+        },
+      );
+    }
+
     if (!(request.headers.get("content-type") || "").includes("application/json")) {
       return NextResponse.json(
         { message: "Непідтримуваний формат запиту." },
